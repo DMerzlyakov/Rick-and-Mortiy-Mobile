@@ -12,14 +12,18 @@
         android:theme="@style/Theme.RickAndMorty"
         tools:targetApi="31">
         <activity
-            android:name=".presentation.activities.MainActivity"
-            android:exported="true">
+            android:name=".presentation.activities.SplashScreenActivity"
+            android:exported="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".presentation.activities.MainActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
