@@ -5,8 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import com.example.rickandmorty.databinding.ItemCharacterBinding
 import com.example.rickandmorty.domain.Character
+import com.example.rickandmorty.presentation.OnClickRecyclerViewInterface
 
-class CharactersRecyclerViewAdapter :
+class CharactersRecyclerViewAdapter(private val onClickRecyclerViewInterface: OnClickRecyclerViewInterface<Character>) :
     ListAdapter<Character, CharacterViewHolder>(CharactersDiffUtil()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharacterViewHolder {
         return CharacterViewHolder(
@@ -14,7 +15,8 @@ class CharactersRecyclerViewAdapter :
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            )
+            ), onClickRecyclerViewInterface
+
         )
     }
 

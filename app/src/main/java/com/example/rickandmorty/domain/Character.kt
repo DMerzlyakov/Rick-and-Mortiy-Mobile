@@ -5,4 +5,6 @@ data class Character(
     val name: String,
     val status: String,
     val species: String,
-    val genre: String)
+    val genre: String,
+    val urlAvatar: String
+)
