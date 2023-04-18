@@ -4,6 +4,7 @@ import com.example.rickandmorty.domain.Character
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmorty.databinding.ItemCharacterBinding
 import com.example.rickandmorty.presentation.OnClickRecyclerViewInterface
+import com.example.rickandmorty.presentation.setImageFromUrl
 
 class CharacterViewHolder(
     private val binding: ItemCharacterBinding,
@@ -24,16 +25,15 @@ class CharacterViewHolder(
     fun onBind(item: Character) {
         with(binding) {
             nameView.text = item.name
-            genreView.text = item.genre
+            genreView.text = item.gender
             speciesView.text = item.species
             statusView.text = item.status
 
-            // TODO (add avatar download) - avatarView
+            avatarView.setImageFromUrl(item.urlAvatar, binding.root.context)
         }
 
         mItem = item
 
     }
-
 
 }

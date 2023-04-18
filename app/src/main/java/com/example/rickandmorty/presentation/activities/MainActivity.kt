@@ -4,13 +4,19 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.rickandmorty.R
+import com.example.rickandmorty.data.remote.CharacterApi
+import com.example.rickandmorty.data.remote.RetrofitClient
+import com.example.rickandmorty.data.repository.RepositoryImpl
 import com.example.rickandmorty.databinding.ActivityMainBinding
 import com.example.rickandmorty.databinding.ActivitySplashScreenBinding
 import com.example.rickandmorty.presentation.OnNavigationListener
 import com.example.rickandmorty.presentation.characters.CharactersFragment
 import com.example.rickandmorty.presentation.episodes.EpisodesFragment
 import com.example.rickandmorty.presentation.locations.LocationsFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), OnNavigationListener {
 
@@ -29,6 +35,7 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
         setupBottomNavigationListener()
     }
 
+
     private fun setAnimationOnCreate() =
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
 
@@ -38,8 +45,13 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
 
     override fun navigateToFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
-            .replace(binding.fragmentContainer.id, fragment)
+            .addToBackStack(null)
+            .replace(R.id.fragment_container, fragment)
             .commit()
+    }
+
+    override fun toBackStack() {
+        supportFragmentManager.popBackStack()
     }
 
     private fun setupBottomNavigationListener() {
@@ -66,6 +78,5 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
                 else -> false
             }
         }
-
     }
 }

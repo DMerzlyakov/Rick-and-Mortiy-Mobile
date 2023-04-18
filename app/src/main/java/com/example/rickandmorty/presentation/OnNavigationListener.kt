@@ -7,4 +7,6 @@ interface OnNavigationListener {
     fun updateBottomNavigationVisibility(visibility: Int)
 
     fun navigateToFragment(fragment: Fragment)
+
+    fun toBackStack()
 }

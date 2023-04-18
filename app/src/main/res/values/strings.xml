@@ -3,4 +3,8 @@
     <string name="episodes_text_view">Episodes</string>
     <string name="locations_text_view">Locations</string>
     <string name="characters_text_view">Characters</string>
+    <string name="search_name_text">Search name</string>
+    <string name="filter_text">Filter</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
