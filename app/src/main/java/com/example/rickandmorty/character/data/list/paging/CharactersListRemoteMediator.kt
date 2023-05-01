@@ -9,7 +9,6 @@ import com.example.rickandmorty.character.data.list.local.CharactersListDao
 import com.example.rickandmorty.character.data.list.local.model.CharacterEntity
 import com.example.rickandmorty.character.data.list.mapper.toCharacterEntity
 import com.example.rickandmorty.character.data.list.remote.CharacterListApi
-import kotlin.math.log
 
 @OptIn(ExperimentalPagingApi::class)
 class CharactersListRemoteMediator(
@@ -33,9 +32,7 @@ class CharactersListRemoteMediator(
         val limit = state.config.pageSize
 
         return try {
-
             val characters = getCharactersByRemote(name, status, species, gender)
-            Log.e("RESPONCE", characters.toString())
             if (loadType == LoadType.REFRESH){
                 charactersListDao.refresh(characters, name, status, species, gender)
             } else{

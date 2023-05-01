@@ -13,16 +13,17 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.rickandmorty.character.di.list.DaggerCharacterListComponent
 import com.example.rickandmorty.character.domain.list.model.CharacterFilter
 import com.example.rickandmorty.character.presentation.detail.CharacterDetailsFragment
 import com.example.rickandmorty.character.presentation.list.model.CharacterUiModel
 import com.example.rickandmorty.character.presentation.list.recycler_view.CharactersRecyclerViewAdapter
 import com.example.rickandmorty.databinding.FragmentCharactersBinding
 import com.example.rickandmorty.extention_util.OnClickRecyclerViewInterface
-import com.example.rickandmorty.main.OnNavigationListener
+import com.example.rickandmorty.main.presentation.OnNavigationListener
 import com.example.rickandmorty.main.presentation.RickAndMortyApp
 import com.example.rickandmorty.universal_filter.FilterFragment
-import com.example.rickandmorty.universal_filter.OnFilterResultListener
+import com.example.rickandmorty.universal_filter.OnFilterResultListenerCharacter
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -39,8 +40,9 @@ class CharactersListFragment : Fragment() {
         get() = _binding ?: throw RuntimeException("FragmentCharactersBinding is null")
 
     private val component by lazy {
-        (requireActivity().application as RickAndMortyApp).component
+        DaggerCharacterListComponent.factory().create((requireActivity().application as RickAndMortyApp).component)
     }
+
 
     @Inject
     lateinit var viewModelFactory: CharacterListViewModelFactory
@@ -122,11 +124,10 @@ class CharactersListFragment : Fragment() {
 
             filterBtn.setOnClickListener {
                 val dialog = FilterFragment.newInstance(
-                    FilterFragment.FROM_CHARACTER,
-                    searchView.editText?.text.toString()
+                    FilterFragment.Companion.TYPE.FROM_CHARACTER_LIST
                 )
 
-                dialog.setOnFilterResultListener(object : OnFilterResultListener {
+                dialog.setOnFilterResultListenerCharacter(object : OnFilterResultListenerCharacter {
                     override fun confirmFilter(item: CharacterFilter?) {
                         item?.let {
                             binding.refreshLayout.isRefreshing = true
@@ -184,7 +185,6 @@ class CharactersListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.usersFlow.collectLatest { pagingData ->
                 adapter.submitData(pagingData)
-
             }
         }
     }

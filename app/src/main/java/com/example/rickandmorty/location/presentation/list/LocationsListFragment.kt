@@ -14,14 +14,20 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.rickandmorty.databinding.FragmentLocationsBinding
 import com.example.rickandmorty.extention_util.OnClickRecyclerViewInterface
+import com.example.rickandmorty.location.di.list.DaggerLocationListComponent
 import com.example.rickandmorty.location.domain.list.model.LocationFilter
 import com.example.rickandmorty.location.presentation.list.model.LocationUiModel
 import com.example.rickandmorty.location.presentation.list.recycler_view.LocationsRecyclerViewAdapter
-import com.example.rickandmorty.main.OnNavigationListener
+import com.example.rickandmorty.main.presentation.OnNavigationListener
+import com.example.rickandmorty.main.presentation.RickAndMortyApp
+import com.example.rickandmorty.universal_filter.FilterFragment
+import com.example.rickandmorty.universal_filter.FilterFragment.Companion.TYPE.FROM_LOCATION_LIST
+import com.example.rickandmorty.universal_filter.OnFilterResultListenerLocation
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
+import javax.inject.Inject
 
 class LocationsListFragment : Fragment(){
 
@@ -31,9 +37,19 @@ class LocationsListFragment : Fragment(){
         get() = _binding ?: throw RuntimeException("FragmentLocationsBinding is null")
 
 
-    private val viewModel: LocationsListViewModel by lazy {
-        ViewModelProvider(this)[LocationsListViewModel::class.java]
+
+
+    private val component by lazy {
+        DaggerLocationListComponent.factory().create((requireActivity().application as RickAndMortyApp).component)
     }
+
+    @Inject
+    lateinit var viewModelFactory: LocationListViewModelFactory
+
+    private val viewModel: LocationsListViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[LocationsListViewModel::class.java]
+    }
+
 
     private val onClickRecyclerViewInterface = object :
         OnClickRecyclerViewInterface<LocationUiModel> {
@@ -52,6 +68,8 @@ class LocationsListFragment : Fragment(){
         } else {
             throw RuntimeException("Activity must be implements OnNavigationListener")
         }
+
+        component.inject(this)
     }
 
     override fun onCreateView(
@@ -76,22 +94,21 @@ class LocationsListFragment : Fragment(){
                 viewModel.setSearchByFilter(LocationFilter(it.toString()))
             }
 
-//            filterBtn.setOnClickListener {
-//                val dialog = FilterFragment.newInstance(
-//                    FilterFragment.FROM_CHARACTER,
-//                    searchView.editText?.text.toString()
-//                )
-//
-//                dialog.setOnFilterResultListener(object : OnFilterResultListener {
-//                    override fun confirmFilter(item: CharactersFilter?) {
-//                        item?.let {
-//                            binding.refreshLayout.isRefreshing = true
-//                            viewModel.setSearchByFilter(it) }
-//                    }
-//                })
-//                dialog.show(childFragmentManager, "Filter")
-//            }
-//
+            filterBtn.setOnClickListener {
+                val dialog = FilterFragment.newInstance(
+                    FROM_LOCATION_LIST,
+                )
+
+                dialog.setOnFilterResultListenerLocation(object : OnFilterResultListenerLocation {
+                    override fun confirmFilter(item: LocationFilter?) {
+                        item?.let {
+                            binding.refreshLayout.isRefreshing = true
+                            viewModel.setSearchByFilter(it) }
+                    }
+                })
+                dialog.show(childFragmentManager, "Filter")
+            }
+
             refreshLayout.setOnRefreshListener {
                 binding.circularProgressBar.visibility = View.INVISIBLE
                 adapter.refresh()
@@ -125,6 +142,8 @@ class LocationsListFragment : Fragment(){
     private fun makeToast(message: String) {
         Snackbar.make(binding.constraintLayout, message, Snackbar.LENGTH_SHORT).show()
     }
+
+
     /** Установка адаптера для RecyclerView*/
     private fun initialRecycleView() = with(binding) {
         locationList.layoutManager = GridLayoutManager(requireContext(), 2)
@@ -135,8 +154,6 @@ class LocationsListFragment : Fragment(){
     }
 
     private fun observeLocations() {
-        viewModel.initRepository(requireContext())
-        viewModel.getData()
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.usersFlow.collectLatest { pagingData ->
                 adapter.submitData(pagingData)

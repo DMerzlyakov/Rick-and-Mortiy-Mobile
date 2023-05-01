@@ -1,6 +1,6 @@
 package com.example.rickandmorty.character.domain.list.model
 
-data class CharacterDomain(
+data class CharacterDomainModel(
     val id: Int,
     val name: String,
     val status: String,

@@ -1,36 +1,45 @@
 package com.example.rickandmorty.universal_filter
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.example.rickandmorty.character.domain.list.model.CharacterFilter
-import com.example.rickandmorty.databinding.FragmentFilterCharacterBinding
+import com.example.rickandmorty.databinding.FragmentFilterBinding
+import com.example.rickandmorty.location.domain.list.model.LocationFilter
 import com.google.android.material.chip.Chip
 
 
 class FilterFragment : DialogFragment() {
 
-    private var nameFromFragment: String? = null
-    private var fromFragment: String? = null
+    private var filterType: TYPE? = null
+    private var onFilterResultListenerCharacter: OnFilterResultListenerCharacter? = null
+    private var onFilterResultListenerLocation: OnFilterResultListenerLocation? = null
+//    private var onFilterResultListenerCharacter: OnFilterResultListener<CharacterFilter>? = null
 
-    private lateinit var onFilterResultListener: OnFilterResultListener
-
-    private var _binding: FragmentFilterCharacterBinding? = null
-    private val binding: FragmentFilterCharacterBinding
+    private var _binding: FragmentFilterBinding? = null
+    private val binding: FragmentFilterBinding
         get() = _binding ?: throw RuntimeException("FragmentFilterCharacterBinding is null")
 
-    fun setOnFilterResultListener(listener: OnFilterResultListener){
-        onFilterResultListener = listener
+    fun setOnFilterResultListenerCharacter(listener: OnFilterResultListenerCharacter) {
+        onFilterResultListenerCharacter = listener
+    }
+
+    fun setOnFilterResultListenerLocation(listener: OnFilterResultListenerLocation) {
+        onFilterResultListenerLocation = listener
     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            nameFromFragment = it.getString(NAME_PARAM)
-            fromFragment = it.getString(FROM_PARAM)
+            filterType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                it.getSerializable(KEY_TYPE, TYPE::class.java)
+            } else {
+                it.getSerializable(KEY_TYPE) as TYPE
+            }
         }
     }
 
@@ -38,27 +47,93 @@ class FilterFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentFilterCharacterBinding.inflate(inflater, container, false)
+        _binding = FragmentFilterBinding.inflate(inflater, container, false)
 
         setConfirmListener()
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        funSetupTypeFilter()
+
+    }
+
+    private fun funSetupTypeFilter() {
+        when (filterType) {
+            TYPE.FROM_CHARACTER_LIST -> {
+                binding.thirdSearchEditText.visibility = View.GONE
+            }
+            TYPE.FROM_LOCATION_LIST -> {
+                binding.statusChooseChip.visibility = View.GONE
+                binding.statusText.visibility = View.GONE
+                binding.genderChooseChip.visibility = View.GONE
+                binding.genderText.visibility = View.GONE
+
+                binding.secondSearchEditText.hint = "Search by type"
+                binding.thirdSearchEditText.hint = "Search by dimension"
+
+            }
+            TYPE.FROM_EPISODE_LIST -> {
+                binding.statusChooseChip.visibility = View.GONE
+                binding.statusText.visibility = View.GONE
+                binding.genderChooseChip.visibility = View.GONE
+                binding.genderText.visibility = View.GONE
+                binding.secondSearchEditText.visibility = View.GONE
+            }
+            null -> throw RuntimeException("Choose type filter")
+        }
+
+    }
+
     private fun setConfirmListener() {
         with(binding) {
             confirmBtn.setOnClickListener {
-
-                onFilterResultListener.confirmFilter(
-                    getFilterResultCharacter()
-                )
-
+                when (filterType){
+                    TYPE.FROM_CHARACTER_LIST -> {
+                        onFilterResultListenerCharacter?.confirmFilter(
+                            getFilterResultCharacter()
+                        )
+                    }
+                    TYPE.FROM_LOCATION_LIST -> {
+                        onFilterResultListenerLocation?.confirmFilter(
+                            getFilterResultLocation()
+                        )
+                    }
+                    TYPE.FROM_EPISODE_LIST -> TODO()
+                    null -> TODO()
+                }
                 dismiss()
             }
 
             cancelBtn.setOnClickListener {
+                when (filterType){
+                    TYPE.FROM_CHARACTER_LIST -> {
+                        onFilterResultListenerCharacter?.confirmFilter(
+                            CharacterFilter("")
+                        )
+                    }
+                    TYPE.FROM_LOCATION_LIST -> {
+                        onFilterResultListenerLocation?.confirmFilter(
+                            LocationFilter("")
+                        )
+                    }
+                    TYPE.FROM_EPISODE_LIST -> TODO()
+                    null -> TODO()
+                }
                 dismiss()
             }
         }
+    }
+
+    private fun getFilterResultLocation(): LocationFilter {
+
+        return LocationFilter(
+            binding.firstSearchEditText.editText?.text.toString(),
+            binding.secondSearchEditText.editText?.text.toString(),
+            binding.thirdSearchEditText.editText?.text.toString(),
+        )
+
     }
 
     private fun getFilterResultCharacter(): CharacterFilter {
@@ -87,33 +162,22 @@ class FilterFragment : DialogFragment() {
 
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        when (fromFragment) {
-            FROM_CHARACTER -> {
-                with(binding) {
-                    thirdSearchEditText.visibility = View.GONE
-                }
-
-            }
-        }
-    }
-
     companion object {
 
         @JvmStatic
-        fun newInstance(from: String, name: String = "") =
+        fun newInstance(FILTER_PARAM: TYPE) =
             FilterFragment().apply {
                 arguments = Bundle().apply {
-                    putString(NAME_PARAM, name)
-                    putString(FROM_PARAM, from)
+                    putSerializable(KEY_TYPE, FILTER_PARAM)
                 }
             }
 
-        private const val NAME_PARAM = "name"
-        private const val FROM_PARAM = "from"
+        private const val KEY_TYPE = "type"
 
-        const val FROM_CHARACTER = "characterFrom"
+        enum class TYPE {
+            FROM_CHARACTER_LIST,
+            FROM_LOCATION_LIST,
+            FROM_EPISODE_LIST
+        }
     }
 }

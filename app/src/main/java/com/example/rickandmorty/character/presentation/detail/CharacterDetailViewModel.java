@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.rickandmorty.character.domain.detail.GetCharacterDetailUseCase;
 import com.example.rickandmorty.character.domain.detail.model.CharacterDetail;
-import com.example.rickandmorty.character.domain.detail.CharacterDetailRepository;
 
 import javax.inject.Inject;
 
@@ -16,11 +16,12 @@ import io.reactivex.schedulers.Schedulers;
 public class CharacterDetailViewModel extends ViewModel {
 
 
-    private final CharacterDetailRepository characterDetailRepository;
+    private final GetCharacterDetailUseCase getCharacterDetailUseCase;
+
 
     @Inject
-    public CharacterDetailViewModel (CharacterDetailRepository characterDetailRepository) {
-        this.characterDetailRepository = characterDetailRepository;
+    public CharacterDetailViewModel (GetCharacterDetailUseCase getCharacterDetailUseCase) {
+        this.getCharacterDetailUseCase = getCharacterDetailUseCase;
 
     }
 
@@ -32,15 +33,14 @@ public class CharacterDetailViewModel extends ViewModel {
 
 
     public void getCharacter(int CharacterId) {
-        characterDetailRepository.getCharacterDetail(CharacterId)
-               .subscribeOn(Schedulers.io())
-               .subscribe(this::handleResults, this::handleError);
+        getCharacterDetailUseCase.invoke(CharacterId)
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::handleResults, this::handleError);
     }
 
 
     private void handleResults(CharacterDetail mCharacter) {
         if (mCharacter != null) {
-
             characterLiveData.postValue(mCharacter);
             Log.e("DATA", "Данные получены" +  mCharacter);
         } else {

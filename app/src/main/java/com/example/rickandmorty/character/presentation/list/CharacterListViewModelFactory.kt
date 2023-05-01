@@ -2,7 +2,6 @@ package com.example.rickandmorty.character.presentation.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.rickandmorty.character.domain.list.CharacterListRepository
 import com.example.rickandmorty.character.domain.list.GetCharacterListUseCase
 import javax.inject.Inject
 

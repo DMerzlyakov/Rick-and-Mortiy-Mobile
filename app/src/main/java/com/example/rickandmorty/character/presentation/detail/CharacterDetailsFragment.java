@@ -13,11 +13,12 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.rickandmorty.R;
+import com.example.rickandmorty.character.di.detail.CharacterDetailComponent;
+import com.example.rickandmorty.character.di.detail.DaggerCharacterDetailComponent;
 import com.example.rickandmorty.character.domain.detail.model.CharacterDetail;
 import com.example.rickandmorty.character.presentation.list.CharactersListFragment;
 import com.example.rickandmorty.databinding.FragmentCharacterDetailsBinding;
-import com.example.rickandmorty.main.OnNavigationListener;
-import com.example.rickandmorty.main.di.ApplicationComponent;
+import com.example.rickandmorty.main.presentation.OnNavigationListener;
 import com.example.rickandmorty.main.presentation.RickAndMortyApp;
 
 import javax.inject.Inject;
@@ -34,12 +35,13 @@ public class CharacterDetailsFragment extends Fragment {
     @Inject
     CharacterDetailsViewModelFactory viewModelFactory;
 
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        ApplicationComponent component = ((RickAndMortyApp) requireActivity().getApplication()).getComponent();
 
+        CharacterDetailComponent component = DaggerCharacterDetailComponent.factory().create(((RickAndMortyApp) requireActivity().getApplication()).getComponent());
         component.inject(this);
 
         if (context instanceof OnNavigationListener) {

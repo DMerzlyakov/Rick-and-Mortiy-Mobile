@@ -1,28 +1,20 @@
 package com.example.rickandmorty.main.di
 
 import android.content.Context
-import com.example.rickandmorty.character.di.list.CharacterListRepositoryModule
-import com.example.rickandmorty.character.di.list.CharactersListUseCaseModule
-import com.example.rickandmorty.character.presentation.detail.CharacterDetailsFragment
-import com.example.rickandmorty.character.presentation.list.CharactersListFragment
+import com.example.rickandmorty.character.di.detail.bridge.CharacterDetailDep
+import com.example.rickandmorty.character.di.list.bridge.CharactersDep
+import com.example.rickandmorty.location.di.list.bridge.LocationListDep
+import com.example.rickandmorty.main.di.modules.NetworkModule
 import dagger.BindsInstance
 import dagger.Component
-import javax.inject.Singleton
+import retrofit2.Retrofit
 
-@Singleton
-@Component(
-    modules = [
-        CharacterListRepositoryModule::class,
-        CharactersListUseCaseModule::class
-    ]
-)
-interface ApplicationComponent {
+@Component(modules = [NetworkModule::class])
+interface ApplicationComponent : CharactersDep, CharacterDetailDep, LocationListDep {
 
+    override val context: Context
 
-    fun inject(fragment: CharactersListFragment)
-
-    fun inject(fragment: CharacterDetailsFragment)
-
+    override val retrofit: Retrofit
 
     @Component.Factory
     interface Factory {

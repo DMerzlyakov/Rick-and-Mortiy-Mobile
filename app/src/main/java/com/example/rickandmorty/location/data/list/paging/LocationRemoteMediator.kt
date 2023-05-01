@@ -1,12 +1,12 @@
 package com.example.rickandmorty.location.data.list.paging
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.example.rickandmorty.location.data.list.local.LocationDao
 import com.example.rickandmorty.location.data.list.local.model.LocationEntity
+import com.example.rickandmorty.location.data.list.mapper.toLocationEntity
 import com.example.rickandmorty.location.data.list.remote.LocationListApi
 
 @OptIn(ExperimentalPagingApi::class)
@@ -47,9 +47,7 @@ class LocationRemoteMediator(
     }
 
     private suspend fun getLocationsByRemote(name: String, type: String, dimension: String): List<LocationEntity> {
-        return locationApi.getAllLocation(pageIndex, name, type, dimension).body()!!.results.map {
-            LocationEntity(it.id, it.name, it.type, it.dimension)
-        }
+        return locationApi.getAllLocation(pageIndex, name, type, dimension).body()!!.toLocationEntity()
     }
 
     private fun getPagedIndex(loadType: LoadType): Int? {

@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.example.rickandmorty.character.domain.list.CharacterListRepository
 import com.example.rickandmorty.character.domain.list.GetCharacterListUseCase
 import com.example.rickandmorty.character.domain.list.model.CharacterFilter
 import com.example.rickandmorty.character.presentation.list.mapper.toCharacterItem

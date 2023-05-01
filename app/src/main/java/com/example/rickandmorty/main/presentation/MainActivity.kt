@@ -8,7 +8,6 @@ import com.example.rickandmorty.character.presentation.list.CharactersListFragme
 import com.example.rickandmorty.databinding.ActivityMainBinding
 import com.example.rickandmorty.episode.presentation.list.EpisodesFragment
 import com.example.rickandmorty.location.presentation.list.LocationsListFragment
-import com.example.rickandmorty.main.OnNavigationListener
 
 class MainActivity : AppCompatActivity(), OnNavigationListener {
 

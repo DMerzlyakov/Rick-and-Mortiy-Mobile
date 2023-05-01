@@ -3,8 +3,16 @@
     <string name="episodes_text_view">Episodes</string>
     <string name="locations_text_view">Locations</string>
     <string name="characters_text_view">Characters</string>
-    <string name="search_name_text">Search name</string>
+    <string name="search_name_text">Search by name</string>
     <string name="filter_text">Filter</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search_species_text">Search by species</string>
+    <string name="search_episode_text">Search by episode</string>
+    <string name="confirm_text">Confirm</string>
+    <string name="clear_filter_text">Clear Filter</string>
+    <string name="choose_gender_text">Choose gender</string>
+    <string name="unknown_text">Unknown</string>
+    <string name="dead_text">Dead</string>
+    <string name="alive_text">Alive</string>
+    <string name="choose_status_text">Choose status</string>
 </resources>

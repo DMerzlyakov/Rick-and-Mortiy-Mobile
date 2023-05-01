@@ -9,16 +9,15 @@ interface LocationDao {
 
     @Query(
         "SELECT * FROM locations WHERE " +
-                "(:name = '' OR name LIKE '%' || :name || '%') AND " +
-                "(:type = '' OR type = :type) AND " +
-                "(:dimension = '' OR dimension = :dimension)"
+                "(:name = '' OR LOWER(name) LIKE '%' || LOWER(:name) || '%') AND " +
+                "(:type = '' OR LOWER(type) LIKE '%' || LOWER(:type) || '%') AND " +
+                "(:dimension = '' OR LOWER(dimension) LIKE '%' || LOWER(:dimension) || '%')"
     )
     fun getPagingLocation(
         name: String,
         type: String,
         dimension: String
     ): PagingSource<Int, LocationEntity>
-//name: String, type: String,dimension: String
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -27,8 +26,8 @@ interface LocationDao {
     @Query(
         "DELETE FROM locations WHERE " +
                 "(:name = '' OR name LIKE '%' || :name || '%') AND " +
-                "(:type = '' OR type = :type) AND " +
-                "(:dimension = '' OR dimension = :dimension)"
+                "(:type = '' OR type LIKE '%' || :type || '%') AND " +
+                "(:dimension = '' OR dimension LIKE '%' || :dimension || '%')"
     )
     suspend fun clear(
         name: String,

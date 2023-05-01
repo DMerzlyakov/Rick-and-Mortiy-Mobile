@@ -1,7 +1,6 @@
 package com.example.rickandmorty.main.presentation
 
 import android.app.Application
-import com.example.rickandmorty.main.di.ApplicationComponent
 import com.example.rickandmorty.main.di.DaggerApplicationComponent
 
 class RickAndMortyApp: Application() {

@@ -1,11 +1,9 @@
-package com.example.rickandmorty.character.di.list
+package com.example.rickandmorty.character.di.list.modules
 
-import com.example.rickandmorty.character.domain.list.CharacterListRepository
 import com.example.rickandmorty.character.domain.list.GetCharacterListUseCase
 import com.example.rickandmorty.character.domain.list.GetCharacterListUseCaseImpl
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 
 @Module
 interface CharactersListUseCaseModule {

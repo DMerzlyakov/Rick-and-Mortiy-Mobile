@@ -10,8 +10,8 @@ interface CharactersListDao {
     @Query(
         "SELECT * FROM characters WHERE " +
                 "(:name = '' OR name LIKE '%' || :name || '%') AND " +
-                "(:status = '' OR status = :status) AND " +
-                "(:species = '' OR species = :species) AND" +
+                "(:status = '' OR LOWER(status) = LOWER(:status)) AND " +
+                "(:species = '' OR LOWER(species)  LIKE '%' || LOWER(:species) || '%') AND " +
                 "(:gender = '' OR gender = :gender)"
     )
     fun getPagingCharacter(
@@ -20,7 +20,7 @@ interface CharactersListDao {
         species: String,
         gender: String
     ): PagingSource<Int, CharacterEntity>
-//
+
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(characters: List<CharacterEntity>)
@@ -28,8 +28,8 @@ interface CharactersListDao {
     @Query(
         "DELETE FROM characters WHERE " +
                 "(:name = '' OR name LIKE '%' || :name || '%') AND " +
-                "(:status = '' OR status = :status) AND " +
-                "(:species = '' OR species = :species) AND" +
+                "(:status = '' OR LOWER(status) = LOWER(:status)) AND " +
+                "(:species = '' OR LOWER(species)  LIKE '%' || LOWER(:species) || '%') AND " +
                 "(:gender = '' OR gender = :gender)"
     )
     suspend fun clear(
