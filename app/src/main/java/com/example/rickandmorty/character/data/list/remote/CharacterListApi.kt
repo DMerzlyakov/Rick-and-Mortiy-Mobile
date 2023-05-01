@@ -1,7 +1,7 @@
 package com.example.rickandmorty.character.data.list.remote
 
 import com.example.rickandmorty.character.data.detail.remote.model.CharacterDetailDTO
-import com.example.rickandmorty.character.data.list.remote.dto.CharactersDTO
+import com.example.rickandmorty.character.data.list.remote.model.CharactersDTO
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

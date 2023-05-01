@@ -11,5 +11,4 @@ interface CharacterListRepository {
         species: String = "", gender: String = ""
     ): Flow<PagingData<CharacterDomain>>
 
-//    suspend fun getCharacterById(mId: Int): Flow<Result<CharacterDetail>>
 }

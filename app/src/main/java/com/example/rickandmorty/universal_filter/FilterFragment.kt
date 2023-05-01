@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import com.example.rickandmorty.character.domain.list.model.CharactersFilter
+import com.example.rickandmorty.character.domain.list.model.CharacterFilter
 import com.example.rickandmorty.databinding.FragmentFilterCharacterBinding
 import com.google.android.material.chip.Chip
 
@@ -39,7 +39,6 @@ class FilterFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentFilterCharacterBinding.inflate(inflater, container, false)
-        // Inflate the layout for this fragment
 
         setConfirmListener()
         return binding.root
@@ -62,7 +61,7 @@ class FilterFragment : DialogFragment() {
         }
     }
 
-    private fun getFilterResultCharacter(): CharactersFilter {
+    private fun getFilterResultCharacter(): CharacterFilter {
 
         var selectedStatus = ""
         var selectedChipId = binding.statusChooseChip.checkedChipId
@@ -79,7 +78,7 @@ class FilterFragment : DialogFragment() {
         }
 
 
-        return CharactersFilter(
+        return CharacterFilter(
             binding.firstSearchEditText.editText?.text.toString(),
             binding.secondSearchEditText.editText?.text.toString(),
             selectedStatus,

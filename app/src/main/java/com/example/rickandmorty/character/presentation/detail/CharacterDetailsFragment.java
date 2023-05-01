@@ -13,10 +13,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.rickandmorty.R;
-
-import com.example.rickandmorty.character.domain.detail.CharacterDetail;
+import com.example.rickandmorty.character.domain.detail.model.CharacterDetail;
+import com.example.rickandmorty.character.presentation.list.CharactersListFragment;
 import com.example.rickandmorty.databinding.FragmentCharacterDetailsBinding;
 import com.example.rickandmorty.main.OnNavigationListener;
+import com.example.rickandmorty.main.di.ApplicationComponent;
+import com.example.rickandmorty.main.presentation.RickAndMortyApp;
+
+import javax.inject.Inject;
 
 
 public class CharacterDetailsFragment extends Fragment {
@@ -26,9 +30,18 @@ public class CharacterDetailsFragment extends Fragment {
     private CharacterDetailViewModel viewModel;
     private CharacterDetail mCharacter;
 
+
+    @Inject
+    CharacterDetailsViewModelFactory viewModelFactory;
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+
+        ApplicationComponent component = ((RickAndMortyApp) requireActivity().getApplication()).getComponent();
+
+        component.inject(this);
+
         if (context instanceof OnNavigationListener) {
             onNavigationListener = (OnNavigationListener) context;
         } else {
@@ -40,10 +53,10 @@ public class CharacterDetailsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int mId = requireArguments().getInt(CharacterDetailsFragment.ARG_PARAM_CHARACTER_ID);
-
-        viewModel = new ViewModelProvider(this, new CharacterDetailsViewModelFactory(mId))
+        viewModel = new ViewModelProvider(this, viewModelFactory)
                 .get(CharacterDetailViewModel.class);
+
+
     }
 
     @Nullable
@@ -53,7 +66,13 @@ public class CharacterDetailsFragment extends Fragment {
         binding = FragmentCharacterDetailsBinding.inflate(inflater, container, false);
 
         setupButtonListeners();
-        observeData();
+
+        observeData(requireArguments().getInt(CharacterDetailsFragment.ARG_PARAM_CHARACTER_ID));
+
+        getChildFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.list_container, CharactersListFragment.newInstance(CharactersListFragment.getWithoutSearchParam()))
+                .commit();
 
         return binding.getRoot();
     }
@@ -65,7 +84,8 @@ public class CharacterDetailsFragment extends Fragment {
     }
 
 
-    private void observeData(){
+    private void observeData(int anInt) {
+        viewModel.getCharacter(anInt);
         viewModel.getCharacterLiveData().observe(getViewLifecycleOwner(), characterDetail -> {
             mCharacter = characterDetail;
             updateViewDetail();
@@ -73,8 +93,8 @@ public class CharacterDetailsFragment extends Fragment {
         });
     }
 
-    private void updateViewDetail(){
-        if (mCharacter != null){
+    private void updateViewDetail() {
+        if (mCharacter != null) {
             binding.nameView.setText(mCharacter.getName());
             Glide.with(requireContext())
                     .load(mCharacter.getUrlAvatar())
@@ -90,9 +110,8 @@ public class CharacterDetailsFragment extends Fragment {
     }
 
 
-
-
     public static final String ARG_PARAM_CHARACTER_ID = "id";
+
     public static CharacterDetailsFragment newInstance(int mId) {
         CharacterDetailsFragment fragment = new CharacterDetailsFragment();
         Bundle args = new Bundle();

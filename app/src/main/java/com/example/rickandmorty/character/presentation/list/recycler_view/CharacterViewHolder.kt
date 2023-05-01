@@ -1,17 +1,17 @@
 package com.example.rickandmorty.character.presentation.list.recycler_view
 
 import androidx.recyclerview.widget.RecyclerView
-import com.example.rickandmorty.character.domain.list.model.CharacterDomain
-import com.example.rickandmorty.character.presentation.list.model.CharacterItem
+import com.example.rickandmorty.character.presentation.list.model.CharacterUiModel
 import com.example.rickandmorty.extention_util.setImageFromUrl
 import com.example.rickandmorty.databinding.ItemCharacterBinding
+import com.example.rickandmorty.extention_util.OnClickRecyclerViewInterface
 
 class CharacterViewHolder(
     private val binding: ItemCharacterBinding,
-    onClickRecyclerViewInterface: OnClickRecyclerViewInterface<CharacterItem>
+    onClickRecyclerViewInterface: OnClickRecyclerViewInterface<CharacterUiModel>
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    var mItem: CharacterItem? = null
+    var mItem: CharacterUiModel? = null
 
     init {
         binding.root.setOnClickListener {
@@ -22,7 +22,7 @@ class CharacterViewHolder(
         }
     }
 
-    fun onBind(item: CharacterItem) {
+    fun onBind(item: CharacterUiModel) {
         with(binding) {
             nameView.text = item.name
             genreView.text = item.gender

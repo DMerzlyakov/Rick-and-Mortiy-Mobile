@@ -1,6 +1,6 @@
 package com.example.rickandmorty.character.domain.detail
 
-import com.example.rickandmorty.character.data.detail.remote.model.CharacterDetailDTO
+import com.example.rickandmorty.character.domain.detail.model.CharacterDetail
 import io.reactivex.Observable
 
 interface CharacterDetailRepository {

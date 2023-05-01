@@ -6,37 +6,33 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.rickandmorty.character.di.CharacterDetailRepositoryObject;
-import com.example.rickandmorty.character.di.CharacterListRepositoryObject;
-import com.example.rickandmorty.character.domain.detail.CharacterDetail;
+import com.example.rickandmorty.character.domain.detail.model.CharacterDetail;
 import com.example.rickandmorty.character.domain.detail.CharacterDetailRepository;
-import com.example.rickandmorty.character.domain.list.CharacterListRepository;
 
-import io.reactivex.Scheduler;
-import io.reactivex.android.schedulers.AndroidSchedulers;
+import javax.inject.Inject;
+
 import io.reactivex.schedulers.Schedulers;
 
 public class CharacterDetailViewModel extends ViewModel {
 
-    private int CharacterId;
 
+    private final CharacterDetailRepository characterDetailRepository;
 
-    public CharacterDetailViewModel(int mId) {
-        CharacterId = mId;
-        getCharacter();
+    @Inject
+    public CharacterDetailViewModel (CharacterDetailRepository characterDetailRepository) {
+        this.characterDetailRepository = characterDetailRepository;
 
-        Log.e("ID", "" + mId);
     }
 
-    private final CharacterDetailRepository repository = CharacterDetailRepositoryObject.INSTANCE.getCharacterRepository();
-//
     private final MutableLiveData<CharacterDetail> characterLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
     public LiveData<CharacterDetail> getCharacterLiveData() {
         return characterLiveData ;
     }
-//
-    public void getCharacter() {
-       repository.getCharacterDetail(CharacterId)
+
+
+    public void getCharacter(int CharacterId) {
+        characterDetailRepository.getCharacterDetail(CharacterId)
                .subscribeOn(Schedulers.io())
                .subscribe(this::handleResults, this::handleError);
     }
@@ -53,6 +49,7 @@ public class CharacterDetailViewModel extends ViewModel {
     }
 
     private void handleError(Throwable t) {
+        errorLiveData.postValue(t.toString());
         Log.e("DATA", "ERROR IN FETCHING API RESPONSE. Try again");
     }
 

@@ -1,10 +1,11 @@
 package com.example.rickandmorty.character.data.detail.mapper
 
 import com.example.rickandmorty.character.data.detail.remote.model.CharacterDetailDTO
-import com.example.rickandmorty.character.domain.detail.CharacterDetail
-import com.example.rickandmorty.character.domain.detail.LocationDetail
+import com.example.rickandmorty.character.domain.detail.model.CharacterDetail
+import com.example.rickandmorty.character.domain.detail.model.LocationDetail
+import javax.inject.Inject
 
-class CharacterDetailDtoToCharacterDetailMapper {
+class CharacterDetailDtoToCharacterDetailMapper @Inject constructor() {
 
     operator fun invoke(item: CharacterDetailDTO): CharacterDetail {
 
