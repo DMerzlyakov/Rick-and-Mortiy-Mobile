@@ -3,6 +3,7 @@ package com.example.rickandmorty.character.presentation.detail;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.RoundedCorner;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -12,16 +13,22 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.rickandmorty.R;
 import com.example.rickandmorty.character.di.detail.CharacterDetailComponent;
 import com.example.rickandmorty.character.di.detail.DaggerCharacterDetailComponent;
-import com.example.rickandmorty.character.domain.detail.model.CharacterDetail;
-import com.example.rickandmorty.character.presentation.list.CharactersListFragment;
+import com.example.rickandmorty.character.presentation.detail.model.CharacterDetailUi;
+import com.example.rickandmorty.character.presentation.list.CharacterListFragment;
 import com.example.rickandmorty.databinding.FragmentCharacterDetailsBinding;
 import com.example.rickandmorty.main.presentation.OnNavigationListener;
 import com.example.rickandmorty.main.presentation.RickAndMortyApp;
 
+import java.util.List;
+
 import javax.inject.Inject;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 
 public class CharacterDetailsFragment extends Fragment {
@@ -29,7 +36,7 @@ public class CharacterDetailsFragment extends Fragment {
     private OnNavigationListener onNavigationListener;
     private FragmentCharacterDetailsBinding binding;
     private CharacterDetailViewModel viewModel;
-    private CharacterDetail mCharacter;
+    private CharacterDetailUi mCharacter;
 
 
     @Inject
@@ -71,11 +78,6 @@ public class CharacterDetailsFragment extends Fragment {
 
         observeData(requireArguments().getInt(CharacterDetailsFragment.ARG_PARAM_CHARACTER_ID));
 
-        getChildFragmentManager().beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.list_container, CharactersListFragment.newInstance(CharactersListFragment.getWithoutSearchParam()))
-                .commit();
-
         return binding.getRoot();
     }
 
@@ -91,6 +93,10 @@ public class CharacterDetailsFragment extends Fragment {
         viewModel.getCharacterLiveData().observe(getViewLifecycleOwner(), characterDetail -> {
             mCharacter = characterDetail;
             updateViewDetail();
+            getChildFragmentManager().beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.list_container, CharacterListFragment.newInstance(CharacterListFragment.getTypeListOnly(), mCharacter.getEpisodeIdList()))
+                    .commit();
 
         });
     }
@@ -100,6 +106,7 @@ public class CharacterDetailsFragment extends Fragment {
             binding.nameView.setText(mCharacter.getName());
             Glide.with(requireContext())
                     .load(mCharacter.getUrlAvatar())
+                    .transform(new RoundedCorners(20))
                     .placeholder(R.drawable.gray_gradient)
                     .into(binding.avatarView);
 
@@ -108,6 +115,9 @@ public class CharacterDetailsFragment extends Fragment {
             binding.statusView.setText(mCharacter.getStatus());
             binding.lastLocationView.setText(mCharacter.getLocation().getName());
             binding.originLocationView.setText(mCharacter.getOrigin().getName());
+
+            binding.mainLayout.setVisibility(View.VISIBLE);
+            binding.circularProgressBar.setVisibility(View.INVISIBLE);
         }
     }
 

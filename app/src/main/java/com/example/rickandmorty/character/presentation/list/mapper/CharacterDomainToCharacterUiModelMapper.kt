@@ -1,11 +1,11 @@
 package com.example.rickandmorty.character.presentation.list.mapper
 
-import com.example.rickandmorty.character.domain.list.model.CharacterDomainModel
-import com.example.rickandmorty.character.presentation.list.model.CharacterUiModel
+import com.example.rickandmorty.character.domain.list.model.CharacterDomain
+import com.example.rickandmorty.character.presentation.list.model.CharacterUi
 
 
-fun CharacterDomainModel.toCharacterItem(): CharacterUiModel {
-    return CharacterUiModel(
+fun CharacterDomain.toCharacterItem(): CharacterUi {
+    return CharacterUi(
         this.id,
         this.name,
         this.status,

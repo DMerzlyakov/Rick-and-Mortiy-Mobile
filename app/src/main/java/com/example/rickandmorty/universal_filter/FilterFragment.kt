@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.example.rickandmorty.character.domain.list.model.CharacterFilter
 import com.example.rickandmorty.databinding.FragmentFilterBinding
+import com.example.rickandmorty.episode.domain.list.model.EpisodeFilter
 import com.example.rickandmorty.location.domain.list.model.LocationFilter
 import com.google.android.material.chip.Chip
 
@@ -17,7 +18,7 @@ class FilterFragment : DialogFragment() {
     private var filterType: TYPE? = null
     private var onFilterResultListenerCharacter: OnFilterResultListenerCharacter? = null
     private var onFilterResultListenerLocation: OnFilterResultListenerLocation? = null
-//    private var onFilterResultListenerCharacter: OnFilterResultListener<CharacterFilter>? = null
+    private var onFilterResultListenerEpisode: OnFilterResultListenerEpisode? = null
 
     private var _binding: FragmentFilterBinding? = null
     private val binding: FragmentFilterBinding
@@ -29,6 +30,10 @@ class FilterFragment : DialogFragment() {
 
     fun setOnFilterResultListenerLocation(listener: OnFilterResultListenerLocation) {
         onFilterResultListenerLocation = listener
+    }
+
+    fun setOnFilterResultListenerEpisode(listener: OnFilterResultListenerEpisode) {
+        onFilterResultListenerEpisode = listener
     }
 
 
@@ -100,7 +105,11 @@ class FilterFragment : DialogFragment() {
                             getFilterResultLocation()
                         )
                     }
-                    TYPE.FROM_EPISODE_LIST -> TODO()
+                    TYPE.FROM_EPISODE_LIST -> {
+                        onFilterResultListenerEpisode?.confirmFilter(
+                            getFilterResultEpisode()
+                        )
+                    }
                     null -> TODO()
                 }
                 dismiss()
@@ -118,7 +127,12 @@ class FilterFragment : DialogFragment() {
                             LocationFilter("")
                         )
                     }
-                    TYPE.FROM_EPISODE_LIST -> TODO()
+                    TYPE.FROM_EPISODE_LIST -> {
+
+                        onFilterResultListenerEpisode?.confirmFilter(
+                            EpisodeFilter("")
+                        )
+                    }
                     null -> TODO()
                 }
                 dismiss()
@@ -131,6 +145,15 @@ class FilterFragment : DialogFragment() {
         return LocationFilter(
             binding.firstSearchEditText.editText?.text.toString(),
             binding.secondSearchEditText.editText?.text.toString(),
+            binding.thirdSearchEditText.editText?.text.toString(),
+        )
+
+    }
+
+    private fun getFilterResultEpisode(): EpisodeFilter {
+
+        return EpisodeFilter(
+            binding.firstSearchEditText.editText?.text.toString(),
             binding.thirdSearchEditText.editText?.text.toString(),
         )
 
@@ -161,6 +184,8 @@ class FilterFragment : DialogFragment() {
         )
 
     }
+
+
 
     companion object {
 

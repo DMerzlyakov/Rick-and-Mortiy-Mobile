@@ -7,7 +7,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.rickandmorty.character.domain.detail.GetCharacterDetailUseCase;
-import com.example.rickandmorty.character.domain.detail.model.CharacterDetail;
+import com.example.rickandmorty.character.domain.detail.model.CharacterDetailDomain;
+import com.example.rickandmorty.character.presentation.detail.mapper.CharacterDetailDomainToCharacterDetailUiMapper;
+import com.example.rickandmorty.character.presentation.detail.model.CharacterDetailUi;
 
 import javax.inject.Inject;
 
@@ -17,17 +19,16 @@ public class CharacterDetailViewModel extends ViewModel {
 
 
     private final GetCharacterDetailUseCase getCharacterDetailUseCase;
-
+    private final CharacterDetailDomainToCharacterDetailUiMapper mapper = new CharacterDetailDomainToCharacterDetailUiMapper();
 
     @Inject
     public CharacterDetailViewModel (GetCharacterDetailUseCase getCharacterDetailUseCase) {
         this.getCharacterDetailUseCase = getCharacterDetailUseCase;
-
     }
 
-    private final MutableLiveData<CharacterDetail> characterLiveData = new MutableLiveData<>();
+    private final MutableLiveData<CharacterDetailUi> characterLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
-    public LiveData<CharacterDetail> getCharacterLiveData() {
+    public LiveData<CharacterDetailUi> getCharacterLiveData() {
         return characterLiveData ;
     }
 
@@ -39,9 +40,9 @@ public class CharacterDetailViewModel extends ViewModel {
     }
 
 
-    private void handleResults(CharacterDetail mCharacter) {
+    private void handleResults(CharacterDetailDomain mCharacter) {
         if (mCharacter != null) {
-            characterLiveData.postValue(mCharacter);
+            characterLiveData.postValue(mapper.mapToCharacterDetailUi(mCharacter));
             Log.e("DATA", "Данные получены" +  mCharacter);
         } else {
             Log.e("DATA", "NO RESULTS FOUND");

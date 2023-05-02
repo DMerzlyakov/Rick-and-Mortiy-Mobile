@@ -10,8 +10,8 @@ class LocationListViewModelFactory @Inject constructor(
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return if (modelClass.isAssignableFrom(LocationsListViewModel::class.java)) {
-            LocationsListViewModel(getLocationListUseCase) as T
+        return if (modelClass.isAssignableFrom(LocationListViewModel::class.java)) {
+            LocationListViewModel(getLocationListUseCase) as T
         } else {
             throw RuntimeException("Unknown view model class")
         }

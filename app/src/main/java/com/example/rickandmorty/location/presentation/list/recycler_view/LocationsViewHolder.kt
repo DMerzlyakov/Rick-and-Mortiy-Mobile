@@ -3,14 +3,14 @@ package com.example.rickandmorty.location.presentation.list.recycler_view
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmorty.databinding.ItemLocationBinding
 import com.example.rickandmorty.extention_util.OnClickRecyclerViewInterface
-import com.example.rickandmorty.location.presentation.list.model.LocationUiModel
+import com.example.rickandmorty.location.presentation.list.model.LocationUi
 
 class LocationsViewHolder(
     private val binding: ItemLocationBinding,
-    onClickRecyclerViewInterface: OnClickRecyclerViewInterface<LocationUiModel>
+    onClickRecyclerViewInterface: OnClickRecyclerViewInterface<LocationUi>
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    var mItem: LocationUiModel? = null
+    var mItem: LocationUi? = null
 
     init {
         binding.root.setOnClickListener {
@@ -21,7 +21,7 @@ class LocationsViewHolder(
         }
     }
 
-    fun onBind(item: LocationUiModel) {
+    fun onBind(item: LocationUi) {
         with(binding) {
             nameView.text = item.name
             dimensionView.text = item.dimension

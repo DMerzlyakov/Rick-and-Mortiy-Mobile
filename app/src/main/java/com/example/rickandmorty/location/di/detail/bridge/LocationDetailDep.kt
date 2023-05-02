@@ -5,7 +5,7 @@ import retrofit2.Retrofit
 
 interface LocationDetailDep {
 
-//    val context: Context
+    val context: Context
 
     val retrofit: Retrofit
 }

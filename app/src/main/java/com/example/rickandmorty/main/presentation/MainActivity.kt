@@ -4,10 +4,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.rickandmorty.R
-import com.example.rickandmorty.character.presentation.list.CharactersListFragment
+import com.example.rickandmorty.character.presentation.list.CharacterListFragment
 import com.example.rickandmorty.databinding.ActivityMainBinding
-import com.example.rickandmorty.episode.presentation.list.EpisodesFragment
-import com.example.rickandmorty.location.presentation.list.LocationsListFragment
+import com.example.rickandmorty.episode.presentation.list.EpisodeListFragment
+import com.example.rickandmorty.location.presentation.list.LocationListFragment
 
 class MainActivity : AppCompatActivity(), OnNavigationListener {
 
@@ -50,19 +50,19 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
             when (menuItem.itemId) {
                 R.id.characters -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, CharactersListFragment.newInstance(CharactersListFragment.Companion.TYPE.PARAM_WITH_SEARCH))
+                        .replace(R.id.fragment_container, CharacterListFragment.newInstance(CharacterListFragment.Companion.TYPE.TYPE_FULL_SCREEN))
                         .commit()
                     true
                 }
                 R.id.locations -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, LocationsListFragment.newInstance())
+                        .replace(R.id.fragment_container, LocationListFragment.newInstance())
                         .commit()
                     true
                 }
                 R.id.episodes -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, EpisodesFragment.newInstance())
+                        .replace(R.id.fragment_container, EpisodeListFragment.newInstance())
                         .commit()
                     true
                 }

@@ -2,7 +2,7 @@ package com.example.rickandmorty.location.data.list.local
 
 import androidx.paging.PagingSource
 import androidx.room.*
-import com.example.rickandmorty.location.data.list.local.model.LocationEntity
+import com.example.rickandmorty.location.data.detail.local.model.LocationEntity
 
 @Dao
 interface LocationDao {

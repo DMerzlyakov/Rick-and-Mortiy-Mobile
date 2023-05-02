@@ -4,7 +4,7 @@ import com.example.rickandmorty.character.di.detail.modules.CharacterDetailRepos
 import com.example.rickandmorty.character.di.list.bridge.CharactersDep
 import com.example.rickandmorty.character.di.list.modules.CharacterListRepositoryModule
 import com.example.rickandmorty.character.di.list.modules.CharactersListUseCaseModule
-import com.example.rickandmorty.character.presentation.list.CharactersListFragment
+import com.example.rickandmorty.character.presentation.list.CharacterListFragment
 import dagger.Component
 import javax.inject.Singleton
 
@@ -19,7 +19,7 @@ import javax.inject.Singleton
 )
 interface CharacterListComponent {
 
-    fun inject(fragment: CharactersListFragment)
+    fun inject(fragment: CharacterListFragment)
 
     @Component.Factory
     interface Factory {

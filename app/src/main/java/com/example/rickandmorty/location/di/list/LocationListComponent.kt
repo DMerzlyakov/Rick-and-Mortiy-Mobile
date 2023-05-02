@@ -3,7 +3,7 @@ package com.example.rickandmorty.location.di.list
 import com.example.rickandmorty.location.di.list.bridge.LocationListDep
 import com.example.rickandmorty.location.di.list.modules.LocationListRepositoryModule
 import com.example.rickandmorty.location.di.list.modules.LocationListUseCaseModule
-import com.example.rickandmorty.location.presentation.list.LocationsListFragment
+import com.example.rickandmorty.location.presentation.list.LocationListFragment
 import dagger.Component
 import javax.inject.Singleton
 
@@ -18,7 +18,7 @@ import javax.inject.Singleton
 )
 interface LocationListComponent {
 
-    fun inject(fragment: LocationsListFragment)
+    fun inject(fragment: LocationListFragment)
 
     @Component.Factory
     interface Factory {

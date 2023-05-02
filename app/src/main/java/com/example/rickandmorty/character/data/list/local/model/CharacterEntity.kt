@@ -2,8 +2,11 @@ package com.example.rickandmorty.character.data.list.local.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.example.rickandmorty.character.data.list.local.ListIntConverter
 
 @Entity(tableName = "characters")
+@TypeConverters(ListIntConverter::class)
 data class CharacterEntity(
     @PrimaryKey
     val id: Int,
@@ -11,8 +14,10 @@ data class CharacterEntity(
     val status: String,
     val species: String,
     val gender: String,
-//    val origin: LocationDetail,
     val urlAvatar: String,
-//    val location: LocationDetail,
-//    val episodeIdList: List<Int>
+    val originId: Int?,
+    val originName: String,
+    val locationId: Int?,
+    val locationName: String,
+    val episodes: List<Int>
 )

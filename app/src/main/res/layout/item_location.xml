@@ -10,50 +10,57 @@
 
     <TextView
         android:id="@+id/name_view"
+        style="@style/HeadingTextStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:ellipsize="marquee"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:singleLine="false"
-        tools:text="Москва"
-        android:textColor="@color/text_item_color"
-        android:textSize="14sp"
-        android:textStyle="bold"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Москва" />
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/type_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="Type"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_view" />
 
     <TextView
         android:id="@+id/type_view"
+        style="@style/DefaultTextStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="4dp"
-        tools:text="Земля"
-        android:textColor="@color/text_item_color"
-        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/name_view" />
+        app:layout_constraintStart_toStartOf="@+id/type_title"
+        app:layout_constraintTop_toBottomOf="@+id/type_title"
+        tools:text="Земля" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/dimension_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="Dimension"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="@+id/type_view"
+        app:layout_constraintTop_toBottomOf="@+id/type_view" />
 
     <TextView
         android:id="@+id/dimension_view"
+        style="@style/DefaultTextStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:ellipsize="marquee"
-        android:singleLine="true"
-        tools:text="Погода"
-        android:textColor="@color/text_item_color"
-        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/type_view" />
+        app:layout_constraintStart_toStartOf="@+id/dimension_title"
+        app:layout_constraintTop_toBottomOf="@+id/dimension_title"
+        tools:text="Погода" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

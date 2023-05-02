@@ -14,12 +14,4 @@ interface LocationListApi {
         @Query("type") type: String,
         @Query("dimension") dimension: String,
     ): Response<LocationDTO>
-
-//
-//    @GET("/api/character/{id}")
-//    suspend fun getCharacterDetail(@Path("id") id: Int) : Response<CharacterDetailDTO>
-//
-//
-//    @GET("/api/character/{idList}")
-//    suspend fun getCharacterListByIdList(@Path("idList") idList: String) : Response<CharacterDetailDTO>
 }
