@@ -1,19 +1,57 @@
 package com.example.rickandmorty.character.data.detail
 
-import com.example.rickandmorty.character.data.detail.mapper.CharacterDetailDtoToCharacterDetailDomainMapper
+import android.util.Log
+import com.example.rickandmorty.character.data.detail.mapper.toCharacterEntity
 import com.example.rickandmorty.character.data.detail.remote.CharacterDetailApi
+import com.example.rickandmorty.character.data.list.local.CharacterListDao
 import com.example.rickandmorty.character.domain.detail.CharacterDetailRepository
 import com.example.rickandmorty.character.domain.detail.model.CharacterDetailDomain
+import com.example.rickandmorty.character.domain.detail.model.LocationDetailDomain
 import io.reactivex.Observable
+import javax.inject.Inject
 
-class CharacterDetailRepositoryImpl(private val characterDetailApi: CharacterDetailApi): CharacterDetailRepository {
+class CharacterDetailRepositoryImpl @Inject constructor(
+    private val characterDetailApi: CharacterDetailApi,
+    private val CharacterDao: CharacterListDao
+) : CharacterDetailRepository {
 
-    private val toCharacterDetailMapper = CharacterDetailDtoToCharacterDetailDomainMapper()
 
+
+    private fun getCharacterDetailByRemote(mId: Int) =
+        characterDetailApi.getDetailCharacter(mId).map { it.toCharacterEntity() }
 
     override fun getCharacterDetail(mId: Int): Observable<CharacterDetailDomain> {
-        return characterDetailApi.getDetailCharacter(mId).map {
-            toCharacterDetailMapper(it)
+        return getCharacterDetailByRemote(mId).flatMap {
+
+                Observable.just(
+                    CharacterDetailDomain(
+                        it.id,
+                        it.name,
+                        it.status,
+                        it.species,
+                        it.gender,
+                        LocationDetailDomain(it.originName, it.originId),
+                        it.urlAvatar,
+                        LocationDetailDomain(it.locationName, it.locationId),
+                        it.episodes
+                    )
+                )
+
+        }.onErrorResumeNext { _: Throwable ->
+            CharacterDao.getCharacterById(mId).map {
+                CharacterDetailDomain(
+                    it.id,
+                    it.name,
+                    it.status,
+                    it.species,
+                    it.gender,
+                    LocationDetailDomain(it.originName, it.originId),
+                    it.urlAvatar,
+                    LocationDetailDomain(it.locationName, it.locationId),
+                    it.episodes
+                )
+            }
+
         }
     }
 }

@@ -33,11 +33,8 @@ class LocationRemoteMediator(
 
             val locations = getLocationsByRemote(name, type, dimension)
 
-            if (loadType == LoadType.REFRESH){
-                locationDao.refresh(locations, name, type, dimension)
-            } else{
-                locationDao.save(locations)
-            }
+            locationDao.save(locations)
+
             MediatorResult.Success(
                 endOfPaginationReached = locations.size < limit
             )

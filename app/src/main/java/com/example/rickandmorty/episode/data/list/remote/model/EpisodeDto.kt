@@ -6,5 +6,5 @@ data class EpisodeDto(
     @SerializedName("info")
     var info: Info,
     @SerializedName("results")
-    var results: List<Results>
+    var results: List<EpisodeResultsDTO>
 )

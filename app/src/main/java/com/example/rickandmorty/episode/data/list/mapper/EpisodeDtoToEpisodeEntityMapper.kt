@@ -6,6 +6,12 @@ import com.example.rickandmorty.episode.data.list.remote.model.EpisodeDto
 
 fun EpisodeDto.toEpisodeEntity(): List<EpisodeEntity> {
     return this.results.map {
-        EpisodeEntity(it.id, it.name, it.air_date, it.episode)
+
+        var characterIdList = emptyList<Int>()
+        if (it.characters.isNotEmpty()){
+            characterIdList = it.characters.map { item -> item.split("/").last().toInt() }
+        }
+
+        EpisodeEntity(it.id, it.name, it.air_date, it.episode, characterIdList)
     }
 }

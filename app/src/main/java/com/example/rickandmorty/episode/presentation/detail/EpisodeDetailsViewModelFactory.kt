@@ -1,15 +1,21 @@
 package com.example.rickandmorty.episode.presentation.detail
 
-//class EpisodeDetailsViewModelFactory(private val mId: Int ) : ViewModelProvider.Factory {
-//
-//
-//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//        if (modelClass.isAssignableFrom(CharacterDetailViewModel::class.java)){
-//            return CharacterDetailViewModel(mId) as T
-//        } else {
-//            throw RuntimeException("Unknown view model class")
-//
-//        }
-//
-//    }
-//}
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.rickandmorty.episode.domain.detail.GetEpisodeDetailUseCase
+import javax.inject.Inject
+
+class EpisodeDetailsViewModelFactory @Inject constructor(private val getEpisodeDetailUseCase: GetEpisodeDetailUseCase) :
+    ViewModelProvider.Factory {
+
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(EpisodeDetailViewModel::class.java)) {
+            return EpisodeDetailViewModel(getEpisodeDetailUseCase) as T
+        } else {
+            throw RuntimeException("Unknown view model class")
+
+        }
+
+    }
+}

@@ -8,7 +8,6 @@ import androidx.paging.RemoteMediator
 import com.example.rickandmorty.character.data.list.local.CharacterListDao
 import com.example.rickandmorty.character.data.list.local.model.CharacterEntity
 import com.example.rickandmorty.character.data.list.mapper.toCharacterEntity
-import com.example.rickandmorty.character.data.list.mapper.toCharacterListEntity
 import com.example.rickandmorty.character.data.list.remote.CharacterListApi
 
 @OptIn(ExperimentalPagingApi::class)
@@ -19,7 +18,6 @@ class CharacterListRemoteMediator(
     private val status: String,
     private val species: String,
     private val gender: String,
-    private val characterListFilter: List<Int>
 ) : RemoteMediator<Int, CharacterEntity>() {
 
     private var pageIndex = 1
@@ -35,32 +33,12 @@ class CharacterListRemoteMediator(
 
         return try {
 
-            val characters =
-                if (characterListFilter.isEmpty()) {
-                    getCharactersByRemote(name, status, species, gender)
-                } else {
-                    getCharactersListByIdByRemote(characterListFilter)
-                }
+            val characters = getCharactersByRemote(name, status, species, gender)
 
-            Log.e("MEDIATOR", characters.toString())
-
-            if (loadType == LoadType.REFRESH && characterListFilter.isEmpty()) {
-                characterListDao.refresh(characters, name, status, species, gender)
-            } else {
-                characterListDao.save(characters)
-            }
-
-            val endOfPaginationStatus = if(
-                characterListFilter.isEmpty()
-            ) {
-                characters.size < limit
-            } else{
-                true
-            }
-
+            characterListDao.save(characters)
 
             MediatorResult.Success(
-                endOfPaginationReached = endOfPaginationStatus
+                endOfPaginationReached = characters.size < limit
 
             )
         } catch (e: Exception) {
@@ -78,12 +56,6 @@ class CharacterListRemoteMediator(
             .toCharacterEntity()
     }
 
-    private suspend fun getCharactersListByIdByRemote(
-        characterListFilter: List<Int>
-    ): List<CharacterEntity> {
-        return characterApi.getCharacterListByIdList(characterListFilter.toString()).body()!!
-            .toCharacterListEntity()
-    }
 
     private fun getPagedIndex(loadType: LoadType): Int? {
         pageIndex = when (loadType) {

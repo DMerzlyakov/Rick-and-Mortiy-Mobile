@@ -43,7 +43,6 @@ public class CharacterDetailViewModel extends ViewModel {
     private void handleResults(CharacterDetailDomain mCharacter) {
         if (mCharacter != null) {
             characterLiveData.postValue(mapper.mapToCharacterDetailUi(mCharacter));
-            Log.e("DATA", "Данные получены" +  mCharacter);
         } else {
             Log.e("DATA", "NO RESULTS FOUND");
         }
@@ -51,7 +50,7 @@ public class CharacterDetailViewModel extends ViewModel {
 
     private void handleError(Throwable t) {
         errorLiveData.postValue(t.toString());
-        Log.e("DATA", "ERROR IN FETCHING API RESPONSE. Try again");
+        Log.e("DATA", t.toString());
     }
 
 

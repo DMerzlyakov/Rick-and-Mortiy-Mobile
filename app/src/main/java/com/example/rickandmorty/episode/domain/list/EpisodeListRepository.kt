@@ -8,4 +8,7 @@ interface EpisodeListRepository {
     suspend fun getPagedEpisode(
         name: String = "", episode: String = "",
     ): Flow<PagingData<EpisodeDomain>>
+
+
+    suspend fun getPagedEpisodesById(episodeIdList: List<Int>): Flow<PagingData<EpisodeDomain>>
 }

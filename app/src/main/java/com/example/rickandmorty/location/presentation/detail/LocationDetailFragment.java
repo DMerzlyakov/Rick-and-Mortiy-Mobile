@@ -13,9 +13,8 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.rickandmorty.character.presentation.list.CharacterListFragment;
 import com.example.rickandmorty.databinding.FragmentLocationDetailBinding;
-import com.example.rickandmorty.location.di.detail.DaggerLocationDetailComponent;
-import com.example.rickandmorty.location.di.detail.LocationDetailComponent;
-import com.example.rickandmorty.location.domain.detail.model.LocationDetailDomain;
+import com.example.rickandmorty.location.di.DaggerLocationComponent;
+import com.example.rickandmorty.location.di.LocationComponent;
 import com.example.rickandmorty.location.presentation.detail.model.LocationDetailUi;
 import com.example.rickandmorty.main.presentation.OnNavigationListener;
 import com.example.rickandmorty.main.presentation.RickAndMortyApp;
@@ -40,7 +39,7 @@ public class LocationDetailFragment extends Fragment {
         super.onAttach(context);
 
 
-        LocationDetailComponent component = DaggerLocationDetailComponent.factory().create(((RickAndMortyApp) requireActivity().getApplication()).getComponent());
+        LocationComponent component = DaggerLocationComponent.factory().create(((RickAndMortyApp) requireActivity().getApplication()).getComponent());
         component.inject(this);
 
         if (context instanceof OnNavigationListener) {
@@ -94,6 +93,8 @@ public class LocationDetailFragment extends Fragment {
     }
 
     private void updateViewDetail() {
+        binding.circularProgressBar.setVisibility(View.INVISIBLE);
+        binding.mainLayout.setVisibility(View.VISIBLE);
         if (mLocation != null) {
             binding.nameView.setText(mLocation.getName());
             binding.dimensionView.setText(mLocation.getDimension());

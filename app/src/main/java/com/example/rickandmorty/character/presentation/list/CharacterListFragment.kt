@@ -14,12 +14,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.rickandmorty.character.di.list.DaggerCharacterListComponent
+import com.example.rickandmorty.character.di.DaggerCharacterComponent
 import com.example.rickandmorty.character.domain.list.model.CharacterFilter
 import com.example.rickandmorty.character.presentation.detail.CharacterDetailsFragment
 import com.example.rickandmorty.character.presentation.list.model.CharacterUi
 import com.example.rickandmorty.character.presentation.list.recycler_view.CharactersRecyclerViewAdapter
-import com.example.rickandmorty.databinding.FragmentCharactersBinding
+import com.example.rickandmorty.databinding.FragmentCharacterListBinding
 import com.example.rickandmorty.extention_util.OnClickRecyclerViewInterface
 import com.example.rickandmorty.main.presentation.OnNavigationListener
 import com.example.rickandmorty.main.presentation.RickAndMortyApp
@@ -36,12 +36,12 @@ class CharacterListFragment : Fragment() {
 
     private lateinit var onNavigationListener: OnNavigationListener
 
-    private var _binding: FragmentCharactersBinding? = null
-    private val binding: FragmentCharactersBinding
+    private var _binding: FragmentCharacterListBinding? = null
+    private val binding: FragmentCharacterListBinding
         get() = _binding ?: throw RuntimeException("FragmentCharactersBinding is null")
 
     private val component by lazy {
-        DaggerCharacterListComponent.factory().create((requireActivity().application as RickAndMortyApp).component)
+        DaggerCharacterComponent.factory().create((requireActivity().application as RickAndMortyApp).component)
     }
 
 
@@ -94,7 +94,7 @@ class CharacterListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentCharactersBinding.inflate(inflater, container, false)
+        _binding = FragmentCharacterListBinding.inflate(inflater, container, false)
 
         setupFragmentType()
 
@@ -176,7 +176,7 @@ class CharacterListFragment : Fragment() {
                 val error = loadState.refresh as LoadState.Error
                 when (error.error) {
                     is NullPointerException -> makeToast("Elements not found")
-                    is UnknownHostException -> makeToast("Connection Error. Load from cache")
+                    is UnknownHostException -> makeToast("Connection Error. Trying load from cache")
                     else -> return@addLoadStateListener
                 }
             }
@@ -196,20 +196,18 @@ class CharacterListFragment : Fragment() {
     }
 
     private fun observeFullCharacterList() {
-        adapter.refresh()
+//        adapter.refresh()
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getFullListCharacter().collectLatest { pagingData ->
-                Log.e("observeFullCharacterList", "observeFullCharacterList")
                 adapter.submitData(pagingData)
             }
         }
     }
 
     private fun observeCharacterListById(idList: List<Int>) {
-        adapter.refresh()
+//        adapter.refresh()
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getListCharacterById(idList).collectLatest { pagingData ->
-                Log.e("listid", "listid")
                 adapter.submitData(pagingData)
             }
         }

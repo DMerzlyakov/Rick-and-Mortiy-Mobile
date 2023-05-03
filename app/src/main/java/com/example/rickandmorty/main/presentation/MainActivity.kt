@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
             when (menuItem.itemId) {
                 R.id.characters -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, CharacterListFragment.newInstance(CharacterListFragment.Companion.TYPE.TYPE_FULL_SCREEN))
+                        .replace(R.id.fragment_container, CharacterListFragment.newInstance(CharacterListFragment.TypeFullScreen))
                         .commit()
                     true
                 }
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), OnNavigationListener {
                 }
                 R.id.episodes -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragment_container, EpisodeListFragment.newInstance())
+                        .replace(R.id.fragment_container, EpisodeListFragment.newInstance(EpisodeListFragment.TypeFullScreen))
                         .commit()
                     true
                 }

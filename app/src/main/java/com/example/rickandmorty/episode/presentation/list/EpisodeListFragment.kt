@@ -1,6 +1,7 @@
 package com.example.rickandmorty.episode.presentation.list
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,9 +13,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.rickandmorty.databinding.FragmentEpisodesBinding
-import com.example.rickandmorty.episode.di.list.DaggerEpisodeListComponent
+import com.example.rickandmorty.databinding.FragmentEpisodeListBinding
+import com.example.rickandmorty.episode.di.DaggerEpisodeComponent
 import com.example.rickandmorty.episode.domain.list.model.EpisodeFilter
+import com.example.rickandmorty.episode.presentation.detail.EpisodeDetailsFragment
 import com.example.rickandmorty.episode.presentation.list.model.EpisodeUi
 import com.example.rickandmorty.episode.presentation.list.recyclerView.EpisodesRecyclerViewAdapter
 import com.example.rickandmorty.extention_util.OnClickRecyclerViewInterface
@@ -31,12 +33,12 @@ import javax.inject.Inject
 class EpisodeListFragment : Fragment(){
 
     private lateinit var onNavigationListener: OnNavigationListener
-    private var _binding: FragmentEpisodesBinding? = null
-    private val binding: FragmentEpisodesBinding
+    private var _binding: FragmentEpisodeListBinding? = null
+    private val binding: FragmentEpisodeListBinding
         get() = _binding ?: throw RuntimeException("FragmentEpisodesBinding is null")
 
     private val component by lazy {
-        DaggerEpisodeListComponent.factory().create((requireActivity().application as RickAndMortyApp).component)
+        DaggerEpisodeComponent.factory().create((requireActivity().application as RickAndMortyApp).component)
     }
 
     @Inject
@@ -49,12 +51,15 @@ class EpisodeListFragment : Fragment(){
     private val onClickRecyclerViewInterface = object :
         OnClickRecyclerViewInterface<EpisodeUi> {
         override fun onItemClick(item: EpisodeUi, position: Int) {
-//            val fragment = LocationDetailFragment.newInstance(item.id)
-//            onNavigationListener.navigateToFragment(fragment)
+            val fragment = EpisodeDetailsFragment.newInstance(item.id)
+            onNavigationListener.navigateToFragment(fragment)
+            onNavigationListener.updateBottomNavigationVisibility(View.GONE)
         }
     }
 
     private val adapter = EpisodesRecyclerViewAdapter(onClickRecyclerViewInterface)
+
+    private var fragmentType = TYPE.TYPE_FULL_SCREEN
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -67,14 +72,69 @@ class EpisodeListFragment : Fragment(){
         component.inject(this)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        if (arguments != null) {
+            fragmentType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                requireArguments().getSerializable(KEY_TYPE, TYPE::class.java) as TYPE
+            } else {
+                requireArguments().getSerializable(KEY_TYPE) as TYPE
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentEpisodesBinding.inflate(inflater, container, false)
+
+        _binding = FragmentEpisodeListBinding.inflate(inflater, container, false)
+        setupFragmentType()
 
         return binding.root
     }
+
+    private fun setupFragmentType() {
+        when (fragmentType) {
+
+            TYPE.TYPE_FULL_SCREEN -> {
+                onNavigationListener.updateBottomNavigationVisibility(View.VISIBLE)
+                binding.constraintLayout.visibility = View.VISIBLE
+
+                observeFullEpisodeList()
+            }
+            TYPE.TYPE_ONLY_LIST_BY_ID -> {
+                binding.constraintLayout.visibility = View.GONE
+
+                val episodeIdList = requireArguments().getIntegerArrayList(KEY_ID_LIST)
+
+                if (episodeIdList.isNullOrEmpty()){
+                    binding.circularProgressBar.isVisible = false
+                } else{
+                    observeEpisodeListById(episodeIdList.toList())
+                }
+
+            }
+        }
+    }
+
+    private fun observeFullEpisodeList() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getFullListEpisode().collectLatest { pagingData ->
+                adapter.submitData(pagingData)
+            }
+        }
+    }
+
+    private fun observeEpisodeListById(idList: List<Int>) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getListEpisodeById(idList).collectLatest { pagingData ->
+                adapter.submitData(pagingData)
+            }
+        }
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -144,19 +204,38 @@ class EpisodeListFragment : Fragment(){
         episodeList.layoutManager = GridLayoutManager(requireContext(), 2)
         episodeList.adapter = adapter
 
-        observeLocations()
         initialStateListener()
     }
 
-    private fun observeLocations() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.episodesFlow.collectLatest { pagingData ->
-                adapter.submitData(pagingData)
-            }
-        }
-    }
+
 
     companion object {
-        fun newInstance() = EpisodeListFragment()
+        @JvmStatic
+        fun newInstance(TYPE_PARAM: TYPE, EPISODE_LIST: List<Int> = emptyList()): EpisodeListFragment {
+            val fragment = EpisodeListFragment()
+            val args = Bundle()
+            args.putSerializable(KEY_TYPE, TYPE_PARAM)
+
+            if (EPISODE_LIST.isNotEmpty()){
+                args.putIntegerArrayList(KEY_ID_LIST, ArrayList(EPISODE_LIST))
+            }
+            fragment.arguments = args
+            return fragment
+        }
+
+        enum class TYPE {
+            TYPE_ONLY_LIST_BY_ID,
+            TYPE_FULL_SCREEN
+        }
+
+        @JvmStatic
+        val TypeFullScreen = TYPE.TYPE_FULL_SCREEN
+
+        @JvmStatic
+        val TypeListOnly = TYPE.TYPE_ONLY_LIST_BY_ID
+
+        private const val KEY_TYPE = "TYPE"
+
+        private const val KEY_ID_LIST = "ID_LIST"
     }
 }

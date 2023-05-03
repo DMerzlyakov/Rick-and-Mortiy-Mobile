@@ -3,7 +3,6 @@ package com.example.rickandmorty.character.presentation.detail;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.RoundedCorner;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,21 +13,19 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.rickandmorty.R;
-import com.example.rickandmorty.character.di.detail.CharacterDetailComponent;
-import com.example.rickandmorty.character.di.detail.DaggerCharacterDetailComponent;
+import com.example.rickandmorty.character.di.CharacterComponent;
+import com.example.rickandmorty.character.di.DaggerCharacterComponent;
 import com.example.rickandmorty.character.presentation.detail.model.CharacterDetailUi;
-import com.example.rickandmorty.character.presentation.list.CharacterListFragment;
 import com.example.rickandmorty.databinding.FragmentCharacterDetailsBinding;
+import com.example.rickandmorty.episode.presentation.list.EpisodeListFragment;
+import com.example.rickandmorty.location.presentation.detail.LocationDetailFragment;
 import com.example.rickandmorty.main.presentation.OnNavigationListener;
 import com.example.rickandmorty.main.presentation.RickAndMortyApp;
-
-import java.util.List;
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerDrawable;
 
 import javax.inject.Inject;
-
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 
 public class CharacterDetailsFragment extends Fragment {
@@ -48,8 +45,9 @@ public class CharacterDetailsFragment extends Fragment {
         super.onAttach(context);
 
 
-        CharacterDetailComponent component = DaggerCharacterDetailComponent.factory().create(((RickAndMortyApp) requireActivity().getApplication()).getComponent());
+        CharacterComponent component = DaggerCharacterComponent.factory().create(((RickAndMortyApp) requireActivity().getApplication()).getComponent());
         component.inject(this);
+
 
         if (context instanceof OnNavigationListener) {
             onNavigationListener = (OnNavigationListener) context;
@@ -84,6 +82,17 @@ public class CharacterDetailsFragment extends Fragment {
     private void setupButtonListeners() {
         binding.btnBack.setOnClickListener(view -> onNavigationListener.toBackStack());
 
+        binding.originLocationView.setOnClickListener(view -> {
+            if (mCharacter.getOrigin().getId() != null) {
+                onNavigationListener.navigateToFragment(LocationDetailFragment.newInstance(mCharacter.getOrigin().getId()));
+            }
+        });
+
+        binding.lastLocationView.setOnClickListener(view -> {
+            if (mCharacter.getLocation().getId() != null) {
+                onNavigationListener.navigateToFragment(LocationDetailFragment.newInstance(mCharacter.getLocation().getId()));
+            }
+        });
 
     }
 
@@ -94,8 +103,7 @@ public class CharacterDetailsFragment extends Fragment {
             mCharacter = characterDetail;
             updateViewDetail();
             getChildFragmentManager().beginTransaction()
-                    .addToBackStack(null)
-                    .replace(R.id.list_container, CharacterListFragment.newInstance(CharacterListFragment.getTypeListOnly(), mCharacter.getEpisodeIdList()))
+                    .replace(R.id.list_container, EpisodeListFragment.newInstance(EpisodeListFragment.getTypeListOnly(), mCharacter.getEpisodeIdList()))
                     .commit();
 
         });
@@ -104,10 +112,19 @@ public class CharacterDetailsFragment extends Fragment {
     private void updateViewDetail() {
         if (mCharacter != null) {
             binding.nameView.setText(mCharacter.getName());
+
+            Shimmer shimmer = new Shimmer.AlphaHighlightBuilder()
+                    .setBaseAlpha(0.7f)
+                    .setHighlightAlpha(0.9f)
+                    .build();
+            ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
+            shimmerDrawable.setShimmer(shimmer);
+
             Glide.with(requireContext())
                     .load(mCharacter.getUrlAvatar())
+                    .placeholder(shimmerDrawable)
                     .transform(new RoundedCorners(20))
-                    .placeholder(R.drawable.gray_gradient)
+
                     .into(binding.avatarView);
 
             binding.genreView.setText(mCharacter.getGender());

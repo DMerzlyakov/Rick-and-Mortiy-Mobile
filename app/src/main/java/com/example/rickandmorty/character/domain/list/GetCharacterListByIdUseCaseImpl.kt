@@ -12,8 +12,8 @@ class GetCharacterListByIdUseCaseImpl @Inject constructor(
     override suspend fun invoke(
         characterLisstFilter: List<Int>
     ): Flow<PagingData<CharacterDomain>> =
-        characterListRepository.getPagedCharacters(
-            characterListFilter = characterLisstFilter
+        characterListRepository.getPagedCharactersCache(
+            characterLisstFilter
         )
 
 }

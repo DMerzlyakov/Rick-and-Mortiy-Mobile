@@ -12,9 +12,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.rickandmorty.databinding.FragmentLocationsBinding
+import com.example.rickandmorty.databinding.FragmentLocationListBinding
 import com.example.rickandmorty.extention_util.OnClickRecyclerViewInterface
-import com.example.rickandmorty.location.di.list.DaggerLocationListComponent
+import com.example.rickandmorty.location.di.DaggerLocationComponent
 import com.example.rickandmorty.location.domain.list.model.LocationFilter
 import com.example.rickandmorty.location.presentation.detail.LocationDetailFragment
 import com.example.rickandmorty.location.presentation.list.model.LocationUi
@@ -33,15 +33,15 @@ import javax.inject.Inject
 class LocationListFragment : Fragment(){
 
     private lateinit var onNavigationListener: OnNavigationListener
-    private var _binding: FragmentLocationsBinding? = null
-    private val binding: FragmentLocationsBinding
+    private var _binding: FragmentLocationListBinding? = null
+    private val binding: FragmentLocationListBinding
         get() = _binding ?: throw RuntimeException("FragmentLocationsBinding is null")
 
 
 
 
     private val component by lazy {
-        DaggerLocationListComponent.factory().create((requireActivity().application as RickAndMortyApp).component)
+        DaggerLocationComponent.factory().create((requireActivity().application as RickAndMortyApp).component)
     }
 
     @Inject
@@ -57,6 +57,7 @@ class LocationListFragment : Fragment(){
         override fun onItemClick(item: LocationUi, position: Int) {
             val fragment = LocationDetailFragment.newInstance(item.id)
             onNavigationListener.navigateToFragment(fragment)
+            onNavigationListener.updateBottomNavigationVisibility(View.GONE)
         }
     }
 
@@ -77,8 +78,8 @@ class LocationListFragment : Fragment(){
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentLocationsBinding.inflate(inflater, container, false)
-
+        _binding = FragmentLocationListBinding.inflate(inflater, container, false)
+        onNavigationListener.updateBottomNavigationVisibility(View.VISIBLE)
         return binding.root
     }
 
