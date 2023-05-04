@@ -6,6 +6,6 @@ import retrofit2.Retrofit
 interface CharactersDep {
 
     val context: Context
-
     val retrofit: Retrofit
+
 }

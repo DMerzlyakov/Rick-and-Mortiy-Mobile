@@ -9,7 +9,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.example.rickandmorty.location.domain.list.GetLocationListUseCase
 import com.example.rickandmorty.location.domain.list.model.LocationFilter
-import com.example.rickandmorty.location.presentation.list.mapper.toLocationUiModel
+import com.example.rickandmorty.location.presentation.list.mapper.LocationDomainToLocationUiMapper
 import com.example.rickandmorty.location.presentation.list.model.LocationUi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -21,14 +21,13 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class LocationListViewModel @Inject constructor(
-    private val getLocationListUseCase: GetLocationListUseCase
+    private val getLocationListUseCase: GetLocationListUseCase,
+    private val locationDomainToLocationUiMapper: LocationDomainToLocationUiMapper
 ) : ViewModel() {
-
 
     val locationFlow: Flow<PagingData<LocationUi>>
 
     private val searchByFilter = MutableLiveData(LocationFilter(""))
-
 
     init {
         locationFlow = searchByFilter.asFlow()
@@ -36,7 +35,7 @@ class LocationListViewModel @Inject constructor(
             .flatMapLatest {
                 getLocationListUseCase(it.name, it.type, it.dimension)
                     .map { pagingData ->
-                        pagingData.map { item -> item.toLocationUiModel() }
+                        pagingData.map { item -> locationDomainToLocationUiMapper(item) }
                     }
             }
             .cachedIn(viewModelScope)

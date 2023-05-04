@@ -48,7 +48,10 @@ class LocationListRepositoryModule {
 
     @Singleton
     @Provides
-    fun provideCharacterListRepositoryImpl(locationListApi: LocationListApi, locationDao: LocationDao): LocationsListRepositoryImpl {
+    fun provideCharacterListRepositoryImpl(
+        locationListApi: LocationListApi,
+        locationDao: LocationDao
+    ): LocationsListRepositoryImpl {
         return LocationsListRepositoryImpl(
             locationListApi,
             locationDao

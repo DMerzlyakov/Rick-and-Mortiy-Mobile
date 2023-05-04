@@ -8,5 +8,5 @@ import com.example.rickandmorty.episode.data.list.local.model.EpisodeForDetailCa
 @Database(entities = [(EpisodeEntity::class), (EpisodeForDetailCacheEntity::class)], version = 3)
 abstract class EpisodesDatabase : RoomDatabase() {
 
-    abstract fun episodeDao():EpisodeDao
+    abstract fun episodeDao(): EpisodeDao
 }

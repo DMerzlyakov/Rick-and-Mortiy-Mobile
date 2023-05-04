@@ -7,7 +7,7 @@ data class CharacterPagedDTO(
     var info: Info,
     @SerializedName("results")
     var results: List<CharacterResultsDTO>
-    )
+)
 
 
 

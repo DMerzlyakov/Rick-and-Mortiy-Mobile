@@ -2,7 +2,6 @@ package com.example.rickandmorty.episode.data.detail.mapper
 
 import com.example.rickandmorty.episode.data.detail.remote.model.EpisodeDetailDTO
 import com.example.rickandmorty.episode.data.list.local.model.EpisodeEntity
-import com.example.rickandmorty.episode.domain.detail.model.EpisodeDetailDomain
 import javax.inject.Inject
 
 class EpisodeDetailDtoToEpisodeEntityMapper @Inject constructor() {

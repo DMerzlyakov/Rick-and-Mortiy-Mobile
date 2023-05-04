@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.rickandmorty.databinding.FragmentLocationListBinding
-import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
 import com.example.rickandmorty.location.di.DaggerLocationComponent
 import com.example.rickandmorty.location.domain.list.model.LocationFilter
 import com.example.rickandmorty.location.presentation.detail.LocationDetailFragment
@@ -24,6 +23,7 @@ import com.example.rickandmorty.main.presentation.RickAndMortyApp
 import com.example.rickandmorty.universal_filter.FilterFragment
 import com.example.rickandmorty.universal_filter.FilterFragment.Companion.TYPE.FROM_LOCATION_LIST
 import com.example.rickandmorty.universal_filter.OnFilterResultListenerLocation
+import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -116,8 +116,10 @@ class LocationListFragment : Fragment() {
         dialog.setOnFilterResultListenerLocation(object : OnFilterResultListenerLocation {
             override fun confirmFilter(item: LocationFilter?) {
                 item?.let {
+                    binding.searchView.editText?.setText(it.name)
                     binding.refreshLayout.isRefreshing = true
                     viewModel.setSearchByFilter(it)
+
                 }
             }
         })

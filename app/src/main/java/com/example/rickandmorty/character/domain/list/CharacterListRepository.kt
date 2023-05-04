@@ -14,5 +14,5 @@ interface CharacterListRepository {
 
     fun getPagedCharactersCache(
         characterListFilter: List<Int>
-    ) : Flow<PagingData<CharacterDomain>>
+    ): Flow<PagingData<CharacterDomain>>
 }

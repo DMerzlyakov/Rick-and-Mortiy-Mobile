@@ -2,16 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/characters"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/character_vector"
         android:title="@string/characters_text_view" />
 
     <item
         android:id="@+id/locations"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/location_vector"
         android:title="@string/locations_text_view" />
 
     <item
         android:id="@+id/episodes"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/episode_vector"
         android:title="@string/episodes_text_view" />
 </menu>

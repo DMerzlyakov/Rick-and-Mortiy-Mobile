@@ -7,5 +7,5 @@ import com.example.rickandmorty.location.data.list.local.model.LocationEntity
 @Database(entities = [(LocationEntity::class)], version = 2)
 abstract class LocationDatabase : RoomDatabase() {
 
-    abstract fun locationDao():LocationDao
+    abstract fun locationDao(): LocationDao
 }

@@ -5,10 +5,10 @@ import com.example.rickandmorty.episode.domain.list.model.EpisodeDomain
 import kotlinx.coroutines.flow.Flow
 
 interface EpisodeListRepository {
+
     suspend fun getPagedEpisode(
         name: String = "", episode: String = "",
     ): Flow<PagingData<EpisodeDomain>>
-
 
     suspend fun getPagedEpisodesById(episodeIdList: List<Int>): Flow<PagingData<EpisodeDomain>>
 }

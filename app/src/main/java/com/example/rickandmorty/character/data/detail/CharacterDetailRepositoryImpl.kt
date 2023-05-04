@@ -4,6 +4,7 @@ import com.example.rickandmorty.character.data.detail.mapper.CharacterDetailDtoT
 import com.example.rickandmorty.character.data.detail.mapper.CharacterEntityToCharacterDetailDomainMapper
 import com.example.rickandmorty.character.data.detail.remote.CharacterDetailApi
 import com.example.rickandmorty.character.data.list.local.CharacterListDao
+import com.example.rickandmorty.character.data.list.local.model.CharacterEntity
 import com.example.rickandmorty.character.domain.detail.CharacterDetailRepository
 import com.example.rickandmorty.character.domain.detail.model.CharacterDetailDomain
 import io.reactivex.Single
@@ -16,19 +17,17 @@ class CharacterDetailRepositoryImpl @Inject constructor(
     private val entityToDomainMapper: CharacterEntityToCharacterDetailDomainMapper
 ) : CharacterDetailRepository {
 
-    private fun getCharacterDetailByRemote(mId: Int) =
-        characterDetailApi.getDetailCharacter(mId).map { dtoToEntityMapper(it) }
+    private fun getCharacterDetailByRemote(mId: Int): Single<CharacterEntity> {
+
+        return characterDetailApi.getDetailCharacter(mId).map { dtoToEntityMapper(it) }
+    }
 
     override fun getCharacterDetail(mId: Int): Single<CharacterDetailDomain> {
         return getCharacterDetailByRemote(mId).flatMap { item ->
-            characterDao.saveCharacter(item).andThen(
-                Single.just(
-                    entityToDomainMapper(item)
-                )
-            ).onErrorResumeNext { _: Throwable ->
-                characterDao.getCharacterById(mId).map {
-                    entityToDomainMapper(it)
-                }
+            characterDao.saveCharacter(item).andThen(Single.just(entityToDomainMapper(item)))
+        }.onErrorResumeNext { _: Throwable ->
+            characterDao.getCharacterById(mId).map {
+                entityToDomainMapper(it)
             }
         }
     }

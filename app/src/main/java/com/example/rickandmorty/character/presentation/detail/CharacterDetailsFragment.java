@@ -11,8 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.rickandmorty.R;
 import com.example.rickandmorty.character.di.CharacterComponent;
 import com.example.rickandmorty.character.di.DaggerCharacterComponent;
@@ -22,8 +20,7 @@ import com.example.rickandmorty.episode.presentation.list.EpisodeListFragment;
 import com.example.rickandmorty.location.presentation.detail.LocationDetailFragment;
 import com.example.rickandmorty.main.presentation.OnNavigationListener;
 import com.example.rickandmorty.main.presentation.RickAndMortyApp;
-import com.facebook.shimmer.Shimmer;
-import com.facebook.shimmer.ShimmerDrawable;
+import com.example.rickandmorty.utils.ExtensionsKt;
 
 import javax.inject.Inject;
 
@@ -44,10 +41,8 @@ public class CharacterDetailsFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-
         CharacterComponent component = DaggerCharacterComponent.factory().create(((RickAndMortyApp) requireActivity().getApplication()).getComponent());
         component.inject(this);
-
 
         if (context instanceof OnNavigationListener) {
             onNavigationListener = (OnNavigationListener) context;
@@ -94,47 +89,40 @@ public class CharacterDetailsFragment extends Fragment {
             }
         });
 
+        binding.refreshLayout.setOnRefreshListener(() -> viewModel.getCharacter(mCharacter.getId()));
+
     }
 
 
-    private void observeData(int anInt) {
-        viewModel.getCharacter(anInt);
+    private void observeData(int mId) {
+        viewModel.getCharacter(mId);
         viewModel.getCharacterLiveData().observe(getViewLifecycleOwner(), characterDetail -> {
             mCharacter = characterDetail;
             updateViewDetail();
-            getChildFragmentManager().beginTransaction()
-                    .replace(R.id.list_container, EpisodeListFragment.newInstance(EpisodeListFragment.getTypeListOnly(), mCharacter.getEpisodeIdList()))
-                    .commit();
-
+            setupEpisodeList();
         });
     }
 
+    private void setupEpisodeList(){
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.list_container, EpisodeListFragment.newInstance(EpisodeListFragment.getTypeListOnly(), mCharacter.getEpisodeIdList()))
+                .commit();
+    }
+
     private void updateViewDetail() {
+        binding.refreshLayout.setRefreshing(false);
+        binding.mainLayout.setVisibility(View.VISIBLE);
+        binding.circularProgressBar.setVisibility(View.INVISIBLE);
         if (mCharacter != null) {
             binding.nameView.setText(mCharacter.getName());
 
-            Shimmer shimmer = new Shimmer.AlphaHighlightBuilder()
-                    .setBaseAlpha(0.7f)
-                    .setHighlightAlpha(0.9f)
-                    .build();
-            ShimmerDrawable shimmerDrawable = new ShimmerDrawable();
-            shimmerDrawable.setShimmer(shimmer);
-
-            Glide.with(requireContext())
-                    .load(mCharacter.getUrlAvatar())
-                    .placeholder(shimmerDrawable)
-                    .transform(new RoundedCorners(20))
-
-                    .into(binding.avatarView);
+            ExtensionsKt.setImageFromUrl(binding.avatarView, mCharacter.getUrlAvatar(), requireContext());
 
             binding.genreView.setText(mCharacter.getGender());
             binding.speciesView.setText(mCharacter.getSpecies());
             binding.statusView.setText(mCharacter.getStatus());
             binding.lastLocationView.setText(mCharacter.getLocation().getName());
             binding.originLocationView.setText(mCharacter.getOrigin().getName());
-
-            binding.mainLayout.setVisibility(View.VISIBLE);
-            binding.circularProgressBar.setVisibility(View.INVISIBLE);
         }
     }
 

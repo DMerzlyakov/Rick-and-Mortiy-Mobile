@@ -1,6 +1,5 @@
 package com.example.rickandmorty.character.data.list.remote
 
-import com.example.rickandmorty.character.data.detail.remote.model.CharacterDetailDTO
 import com.example.rickandmorty.character.data.list.remote.model.CharacterPagedDTO
 import com.example.rickandmorty.character.data.list.remote.model.CharacterResultsDTO
 import retrofit2.Response
@@ -21,5 +20,5 @@ interface CharacterListApi {
 
 
     @GET("/api/character/{idList}")
-    suspend fun getCharacterListByIdList(@Path("idList") idList: String) : Response<List<CharacterResultsDTO>>
+    suspend fun getCharacterListByIdList(@Path("idList") idList: String): Response<List<CharacterResultsDTO>>
 }

@@ -13,24 +13,25 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rickandmorty.databinding.FragmentEpisodeListBinding
 import com.example.rickandmorty.episode.di.DaggerEpisodeComponent
 import com.example.rickandmorty.episode.domain.list.model.EpisodeFilter
 import com.example.rickandmorty.episode.presentation.detail.EpisodeDetailsFragment
 import com.example.rickandmorty.episode.presentation.list.model.EpisodeUi
 import com.example.rickandmorty.episode.presentation.list.recyclerView.EpisodesRecyclerViewAdapter
-import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
 import com.example.rickandmorty.main.presentation.OnNavigationListener
 import com.example.rickandmorty.main.presentation.RickAndMortyApp
 import com.example.rickandmorty.universal_filter.FilterFragment
 import com.example.rickandmorty.universal_filter.OnFilterResultListenerEpisode
+import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
 import javax.inject.Inject
 
-class EpisodeListFragment : Fragment(){
+class EpisodeListFragment : Fragment() {
 
     private lateinit var onNavigationListener: OnNavigationListener
     private var _binding: FragmentEpisodeListBinding? = null
@@ -38,7 +39,8 @@ class EpisodeListFragment : Fragment(){
         get() = _binding ?: throw RuntimeException("FragmentEpisodesBinding is null")
 
     private val component by lazy {
-        DaggerEpisodeComponent.factory().create((requireActivity().application as RickAndMortyApp).component)
+        DaggerEpisodeComponent.factory()
+            .create((requireActivity().application as RickAndMortyApp).component)
     }
 
     @Inject
@@ -106,12 +108,13 @@ class EpisodeListFragment : Fragment(){
             }
             TYPE.TYPE_ONLY_LIST_BY_ID -> {
                 binding.constraintLayout.visibility = View.GONE
+                binding.refreshLayout.isEnabled = false
 
                 val episodeIdList = requireArguments().getIntegerArrayList(KEY_ID_LIST)
 
-                if (episodeIdList.isNullOrEmpty()){
+                if (episodeIdList.isNullOrEmpty()) {
                     binding.circularProgressBar.isVisible = false
-                } else{
+                } else {
                     observeEpisodeListById(episodeIdList.toList())
                 }
 
@@ -145,7 +148,7 @@ class EpisodeListFragment : Fragment(){
 
     private fun initListeners() {
         with(binding) {
-            searchView.editText?.addTextChangedListener{
+            searchView.editText?.addTextChangedListener {
                 viewModel.setSearchByFilter(EpisodeFilter(it.toString()))
             }
 
@@ -157,8 +160,10 @@ class EpisodeListFragment : Fragment(){
                 dialog.setOnFilterResultListenerEpisode(object : OnFilterResultListenerEpisode {
                     override fun confirmFilter(item: EpisodeFilter?) {
                         item?.let {
+                            binding.searchView.editText?.setText(it.name)
                             binding.refreshLayout.isRefreshing = true
-                            viewModel.setSearchByFilter(it) }
+                            viewModel.setSearchByFilter(it)
+                        }
                     }
                 })
                 dialog.show(childFragmentManager, "Filter")
@@ -183,12 +188,12 @@ class EpisodeListFragment : Fragment(){
                     else -> return@addLoadStateListener
                 }
             }
-            with(binding){
-                if (circularProgressBar.isVisible){
-                    circularProgressBar.isVisible =  loadState.refresh is LoadState.Loading
+            with(binding) {
+                if (circularProgressBar.isVisible) {
+                    circularProgressBar.isVisible = loadState.refresh is LoadState.Loading
                 }
-                if (refreshLayout.isRefreshing){
-                    refreshLayout.isRefreshing =  loadState.refresh is LoadState.Loading
+                if (refreshLayout.isRefreshing) {
+                    refreshLayout.isRefreshing = loadState.refresh is LoadState.Loading
                 }
             }
         }
@@ -201,22 +206,28 @@ class EpisodeListFragment : Fragment(){
 
     /** Установка адаптера для RecyclerView*/
     private fun initialRecycleView() = with(binding) {
-        episodeList.layoutManager = GridLayoutManager(requireContext(), 2)
+        if (fragmentType == TYPE.TYPE_FULL_SCREEN) {
+            episodeList.layoutManager = GridLayoutManager(requireContext(), 2)
+        } else{
+            episodeList.layoutManager = LinearLayoutManager(requireContext())
+        }
         episodeList.adapter = adapter
 
         initialStateListener()
     }
 
 
-
     companion object {
         @JvmStatic
-        fun newInstance(TYPE_PARAM: TYPE, EPISODE_LIST: List<Int> = emptyList()): EpisodeListFragment {
+        fun newInstance(
+            TYPE_PARAM: TYPE,
+            EPISODE_LIST: List<Int> = emptyList()
+        ): EpisodeListFragment {
             val fragment = EpisodeListFragment()
             val args = Bundle()
             args.putSerializable(KEY_TYPE, TYPE_PARAM)
 
-            if (EPISODE_LIST.isNotEmpty()){
+            if (EPISODE_LIST.isNotEmpty()) {
                 args.putIntegerArrayList(KEY_ID_LIST, ArrayList(EPISODE_LIST))
             }
             fragment.arguments = args

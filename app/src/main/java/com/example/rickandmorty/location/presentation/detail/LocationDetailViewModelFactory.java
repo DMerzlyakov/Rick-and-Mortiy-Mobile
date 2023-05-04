@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.rickandmorty.character.domain.detail.GetCharacterDetailUseCase;
-import com.example.rickandmorty.character.presentation.detail.CharacterDetailViewModel;
 import com.example.rickandmorty.location.domain.detail.GetLocationDetailUseCase;
 
 import javax.inject.Inject;

@@ -67,10 +67,12 @@ class EpisodeDetailsFragment : Fragment() {
         binding.btnBack.setOnClickListener {
             onNavigationListener.toBackStack()
         }
+
+        binding.refreshLayout.setOnRefreshListener { mEpisode?.id?.let { viewModel.getEpisode(it) } }
     }
 
     private fun observeData(episodeId: Int) {
-        viewModel.getCharacter(episodeId)
+        viewModel.getEpisode(episodeId)
         viewModel.episodeLiveData.observe(viewLifecycleOwner) { item ->
             mEpisode = item
             updateViewDetail()
@@ -78,13 +80,20 @@ class EpisodeDetailsFragment : Fragment() {
     }
 
     private fun setupCharacterList(characterIdList: List<Int>) =
-            childFragmentManager.beginTransaction()
-                .addToBackStack(null)
-                .replace(binding.characterListContainer.id, CharacterListFragment.newInstance(CharacterListFragment.TypeListOnly, characterIdList))
-                .commit()
+        childFragmentManager.beginTransaction()
+            .addToBackStack(null)
+            .replace(
+                binding.characterListContainer.id,
+                CharacterListFragment.newInstance(
+                    CharacterListFragment.TypeListOnly,
+                    characterIdList
+                )
+            )
+            .commit()
 
 
     private fun updateViewDetail() {
+        binding.refreshLayout.isRefreshing = false
         binding.circularProgressBar.visibility = View.INVISIBLE
         binding.mainLayout.visibility = View.VISIBLE
 

@@ -2,7 +2,7 @@ package com.example.rickandmorty.episode.data.detail.remote.model
 
 import com.google.gson.annotations.SerializedName
 
-data class EpisodeDetailDTO (
+data class EpisodeDetailDTO(
 
     @SerializedName("id")
     var id: Int,

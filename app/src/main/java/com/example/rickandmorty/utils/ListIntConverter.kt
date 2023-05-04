@@ -1,4 +1,4 @@
-package com.example.rickandmorty.character.data.list.local
+package com.example.rickandmorty.utils
 
 import androidx.room.TypeConverter
 
@@ -6,7 +6,7 @@ class ListIntConverter {
     @TypeConverter
     fun fromString(value: String): List<Int> =
         if (value == "") emptyList() else value.split(',').map { it.toInt() }
-    
+
     @TypeConverter
     fun toString(list: List<Int>): String =
         if (list.isEmpty()) "" else list.joinToString(",")

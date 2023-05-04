@@ -1,10 +1,7 @@
 package com.example.rickandmorty.character.data.list.mapper
 
-import androidx.paging.PagingData
-import androidx.paging.map
 import com.example.rickandmorty.character.data.list.local.model.CharacterEntity
 import com.example.rickandmorty.character.data.list.remote.model.CharacterPagedDTO
-import com.example.rickandmorty.character.domain.list.model.CharacterDomain
 import javax.inject.Inject
 
 
@@ -14,8 +11,10 @@ class CharacterPageDtoToCharacterEntityMapper @Inject constructor() {
 
         return item.results.map {
 
-            val idOrigin = if (it.origin.url == "") null else it.origin.url.split("/").last().toInt()
-            val idLocation = if (it.location.url == "") null else it.location.url.split("/").last().toInt()
+            val idOrigin =
+                if (it.origin.url == "") null else it.origin.url.split("/").last().toInt()
+            val idLocation =
+                if (it.location.url == "") null else it.location.url.split("/").last().toInt()
 
             CharacterEntity(it.id,
                 it.name,

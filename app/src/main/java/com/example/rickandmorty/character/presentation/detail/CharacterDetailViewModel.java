@@ -1,6 +1,6 @@
 package com.example.rickandmorty.character.presentation.detail;
 
-import android.util.Log;
+import android.annotation.SuppressLint;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -13,7 +13,6 @@ import com.example.rickandmorty.character.presentation.detail.model.CharacterDet
 
 import javax.inject.Inject;
 
-import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
@@ -24,21 +23,21 @@ public class CharacterDetailViewModel extends ViewModel {
     private final CharacterDetailDomainToCharacterDetailUiMapper mapper = new CharacterDetailDomainToCharacterDetailUiMapper();
 
     @Inject
-    public CharacterDetailViewModel (GetCharacterDetailUseCase getCharacterDetailUseCase) {
+    public CharacterDetailViewModel(GetCharacterDetailUseCase getCharacterDetailUseCase) {
         this.getCharacterDetailUseCase = getCharacterDetailUseCase;
     }
 
     private final MutableLiveData<CharacterDetailUi> characterLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
+
     public LiveData<CharacterDetailUi> getCharacterLiveData() {
-        return characterLiveData ;
+        return characterLiveData;
     }
-    public Disposable disposable;
 
 
-
+    @SuppressLint("CheckResult")
     public void getCharacter(int CharacterId) {
-        disposable = getCharacterDetailUseCase.invoke(CharacterId)
+        getCharacterDetailUseCase.invoke(CharacterId)
                 .subscribeOn(Schedulers.io())
                 .subscribeWith(new DisposableSingleObserver<CharacterDetailDomain>() {
 
@@ -55,20 +54,17 @@ public class CharacterDetailViewModel extends ViewModel {
                 });
     }
 
-
     private void handleResults(CharacterDetailDomain mCharacter) {
         if (mCharacter != null) {
             characterLiveData.postValue(mapper.mapToCharacterDetailUi(mCharacter));
         } else {
-            Log.e("DATA", "NO RESULTS FOUND");
+            errorLiveData.postValue("Character not found");
         }
     }
 
     private void handleError(Throwable t) {
         errorLiveData.postValue(t.toString());
-        Log.e("DATA", t.toString());
     }
-
 
 
 }

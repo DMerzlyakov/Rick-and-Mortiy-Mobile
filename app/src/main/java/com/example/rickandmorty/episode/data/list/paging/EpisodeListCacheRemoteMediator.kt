@@ -6,13 +6,14 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.example.rickandmorty.episode.data.list.local.EpisodeDao
 import com.example.rickandmorty.episode.data.list.local.model.EpisodeForDetailCacheEntity
-import com.example.rickandmorty.episode.data.list.mapper.toEpisodeCacheEntity
+import com.example.rickandmorty.episode.data.list.mapper.EpisodeResultDtoToEpisodeCacheEntityMapper
 import com.example.rickandmorty.episode.data.list.remote.EpisodeListApi
 
 @OptIn(ExperimentalPagingApi::class)
 class EpisodeListCacheRemoteMediator(
     private val episodeListApi: EpisodeListApi,
     private val episodeDao: EpisodeDao,
+    private val dtoToCacheEntityMapper: EpisodeResultDtoToEpisodeCacheEntityMapper,
     private val episodeListFilter: List<Int>
 ) : RemoteMediator<Int, EpisodeForDetailCacheEntity>() {
 
@@ -20,24 +21,19 @@ class EpisodeListCacheRemoteMediator(
         loadType: LoadType,
         state: PagingState<Int, EpisodeForDetailCacheEntity>
     ): MediatorResult {
-
-
         return try {
 
             val episodes = getEpisodesListByIdByRemote(episodeListFilter)
-
             episodeDao.saveCache(episodes)
+            MediatorResult.Success(endOfPaginationReached = true)
 
-            MediatorResult.Success(
-                endOfPaginationReached = true
-            )
         } catch (e: Exception) {
             MediatorResult.Error(e)
         }
     }
 
     private suspend fun getEpisodesListByIdByRemote(episodeListFilter: List<Int>): List<EpisodeForDetailCacheEntity> {
-        return episodeListApi.getEpisodeListByIdList(episodeListFilter.toString()).body()!!
-            .toEpisodeCacheEntity()
+        val episodes = episodeListApi.getEpisodeListByIdList(episodeListFilter.toString()).body()
+        return dtoToCacheEntityMapper(episodes!!)
     }
 }

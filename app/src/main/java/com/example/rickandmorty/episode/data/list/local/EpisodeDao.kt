@@ -2,12 +2,9 @@ package com.example.rickandmorty.episode.data.list.local
 
 import androidx.paging.PagingSource
 import androidx.room.*
-import com.example.rickandmorty.character.data.list.local.model.CharacterEntity
-import com.example.rickandmorty.character.data.list.local.model.CharacterForDetailCacheEntity
 import com.example.rickandmorty.episode.data.list.local.model.EpisodeEntity
 import com.example.rickandmorty.episode.data.list.local.model.EpisodeForDetailCacheEntity
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.Single
 
 @Dao

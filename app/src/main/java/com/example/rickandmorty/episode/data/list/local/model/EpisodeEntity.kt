@@ -3,7 +3,7 @@ package com.example.rickandmorty.episode.data.list.local.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.example.rickandmorty.character.data.list.local.ListIntConverter
+import com.example.rickandmorty.utils.ListIntConverter
 
 @Entity(tableName = "episodes")
 @TypeConverters(ListIntConverter::class)

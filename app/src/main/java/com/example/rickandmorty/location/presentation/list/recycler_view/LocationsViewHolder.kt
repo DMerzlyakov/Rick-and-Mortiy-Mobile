@@ -2,8 +2,8 @@ package com.example.rickandmorty.location.presentation.list.recycler_view
 
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmorty.databinding.ItemLocationBinding
-import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
 import com.example.rickandmorty.location.presentation.list.model.LocationUi
+import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
 
 class LocationsViewHolder(
     private val binding: ItemLocationBinding,

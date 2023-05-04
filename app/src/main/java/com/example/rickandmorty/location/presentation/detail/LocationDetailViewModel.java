@@ -1,6 +1,6 @@
 package com.example.rickandmorty.location.presentation.detail;
 
-import android.util.Log;
+import android.annotation.SuppressLint;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -31,11 +31,13 @@ public class LocationDetailViewModel extends ViewModel {
 
     private final MutableLiveData<LocationDetailUi> locationLiveData = new MutableLiveData<LocationDetailUi>();
     private final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
+
     public LiveData<LocationDetailUi> getLocationLiveData() {
         return locationLiveData;
     }
 
 
+    @SuppressLint("CheckResult")
     public void getLocation(int LocationId) {
         getLocationDetailUseCase.invoke(LocationId)
                 .subscribeOn(Schedulers.io())
@@ -46,17 +48,14 @@ public class LocationDetailViewModel extends ViewModel {
     private void handleResults(LocationDetailDomain mLocation) {
         if (mLocation != null) {
             locationLiveData.postValue(mapper.mapToLocationDetailUi(mLocation));
-            Log.e("DATA", "Данные получены" +  mLocation);
         } else {
-            Log.e("DATA", "NO RESULTS FOUND");
+            errorLiveData.postValue("No data");
         }
     }
 
     private void handleError(Throwable t) {
         errorLiveData.postValue(t.toString());
-        Log.e("DATA", "ERROR IN FETCHING API RESPONSE. Try again");
     }
-
 
 
 }

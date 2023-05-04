@@ -19,11 +19,11 @@ import com.example.rickandmorty.character.presentation.detail.CharacterDetailsFr
 import com.example.rickandmorty.character.presentation.list.model.CharacterUi
 import com.example.rickandmorty.character.presentation.list.recycler_view.CharactersRecyclerViewAdapter
 import com.example.rickandmorty.databinding.FragmentCharacterListBinding
-import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
 import com.example.rickandmorty.main.presentation.OnNavigationListener
 import com.example.rickandmorty.main.presentation.RickAndMortyApp
 import com.example.rickandmorty.universal_filter.FilterFragment
 import com.example.rickandmorty.universal_filter.OnFilterResultListenerCharacter
+import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -40,7 +40,8 @@ class CharacterListFragment : Fragment() {
         get() = _binding ?: throw RuntimeException("FragmentCharactersBinding is null")
 
     private val component by lazy {
-        DaggerCharacterComponent.factory().create((requireActivity().application as RickAndMortyApp).component)
+        DaggerCharacterComponent.factory()
+            .create((requireActivity().application as RickAndMortyApp).component)
     }
 
 
@@ -97,6 +98,7 @@ class CharacterListFragment : Fragment() {
 
         setupFragmentType()
 
+
         return binding.root
     }
 
@@ -110,14 +112,16 @@ class CharacterListFragment : Fragment() {
                 observeFullCharacterList()
             }
             TYPE.TYPE_ONLY_LIST_BY_ID -> {
+                binding.refreshLayout.isEnabled = false
                 binding.constraintLayout.visibility = View.GONE
+
 
                 val characterIdList = requireArguments().getIntegerArrayList(KEY_ID_LIST)
 
-                if (characterIdList.isNullOrEmpty()){
+                if (characterIdList.isNullOrEmpty()) {
                     binding.circularProgressBar.isVisible = false
                     binding.listEmptyText.visibility = View.VISIBLE
-                } else{
+                } else {
                     observeCharacterListById(characterIdList.toList())
                 }
 
@@ -145,6 +149,7 @@ class CharacterListFragment : Fragment() {
                 dialog.setOnFilterResultListenerCharacter(object : OnFilterResultListenerCharacter {
                     override fun confirmFilter(item: CharacterFilter?) {
                         item?.let {
+                            binding.searchView.editText?.setText(it.name)
                             binding.refreshLayout.isRefreshing = true
                             viewModel.setSearchByFilter(it)
                         }
@@ -157,7 +162,6 @@ class CharacterListFragment : Fragment() {
                 binding.circularProgressBar.visibility = View.INVISIBLE
                 adapter.refresh()
             }
-
 
         }
     }
@@ -210,15 +214,17 @@ class CharacterListFragment : Fragment() {
         }
     }
 
-
     companion object {
         @JvmStatic
-        fun newInstance(TYPE_PARAM: TYPE, CHARACTER_LIST: List<Int> = emptyList()): CharacterListFragment {
+        fun newInstance(
+            TYPE_PARAM: TYPE,
+            CHARACTER_LIST: List<Int> = emptyList()
+        ): CharacterListFragment {
             val fragment = CharacterListFragment()
             val args = Bundle()
             args.putSerializable(KEY_TYPE, TYPE_PARAM)
 
-            if (CHARACTER_LIST.isNotEmpty()){
+            if (CHARACTER_LIST.isNotEmpty()) {
                 args.putIntegerArrayList(KEY_ID_LIST, ArrayList(CHARACTER_LIST))
             }
             fragment.arguments = args

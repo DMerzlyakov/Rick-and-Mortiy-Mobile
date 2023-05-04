@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.room.*
 import com.example.rickandmorty.location.data.list.local.model.LocationEntity
 import io.reactivex.Completable
-import io.reactivex.Observable
+import io.reactivex.Single
 
 @Dao
 interface LocationDao {
@@ -27,7 +27,7 @@ interface LocationDao {
 
 
     @Query("SELECT * from locations WHERE id = :idLocation")
-    fun getLocationById(idLocation: Int): Observable<LocationEntity>
+    fun getLocationById(idLocation: Int): Single<LocationEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveLocation(location: LocationEntity): Completable

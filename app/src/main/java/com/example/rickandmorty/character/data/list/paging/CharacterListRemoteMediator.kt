@@ -33,9 +33,7 @@ class CharacterListRemoteMediator(
         return try {
 
             val characters = getCharactersByRemote(name, status, species, gender)
-
             characterListDao.save(characters)
-
             MediatorResult.Success(characters.size < state.config.pageSize)
 
         } catch (e: Exception) {
@@ -56,7 +54,6 @@ class CharacterListRemoteMediator(
 
 
     private fun getPagedIndex(loadType: LoadType): Int? {
-
         pageIndex = when (loadType) {
             LoadType.REFRESH -> 1
             LoadType.PREPEND -> return null

@@ -11,6 +11,7 @@
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:contentDescription="@string/button_back_text"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:gravity="center"
@@ -29,238 +30,251 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:text="Character Detail"
+        android:text="@string/character_detail_text"
         app:layout_constraintBottom_toBottomOf="@+id/btn_back"
         app:layout_constraintStart_toEndOf="@+id/btn_back"
         app:layout_constraintTop_toTopOf="@+id/btn_back" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main_layout"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_back">
 
-
-        <ImageView
-            android:id="@+id/avatar_view"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="30dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/name_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Name"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toTopOf="@+id/name_view"
-            app:layout_constraintStart_toStartOf="@+id/name_view" />
-
-        <TextView
-            android:id="@+id/name_view"
-            style="@style/HeadingTextStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            app:layout_constraintBottom_toTopOf="@+id/genre_view"
-            app:layout_constraintEnd_toStartOf="@+id/avatar_view"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintHorizontal_chainStyle="spread_inside"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/avatar_view"
-            tools:text="Данила Мерзляков" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/label_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Status"
-            android:textAlignment="textStart"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@+id/status_view"
-            app:layout_constraintTop_toBottomOf="@+id/avatar_view" />
-
-        <TextView
-            android:id="@+id/status_view"
-            style="@style/DefaultTextStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:textAlignment="textStart"
-            app:layout_constraintEnd_toStartOf="@+id/species_view"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/label_status"
-            tools:text="Живой" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/label_species"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Gender"
-            android:textAlignment="textStart"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toTopOf="@+id/species_view"
-            app:layout_constraintStart_toStartOf="@+id/species_view"
-            app:layout_constraintTop_toTopOf="@+id/label_status" />
-
-        <TextView
-            android:id="@+id/species_view"
-            style="@style/DefaultTextStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:textAlignment="textStart"
-            app:layout_constraintBottom_toBottomOf="@+id/status_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/status_view"
-            app:layout_constraintTop_toTopOf="@+id/status_view"
-            tools:text="Человек" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/label_gender"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Species"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toTopOf="@+id/genre_view"
-            app:layout_constraintStart_toStartOf="@+id/genre_view" />
-
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/genre_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:textColor="@color/text_item_color"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@+id/avatar_view"
-            app:layout_constraintEnd_toEndOf="@+id/name_view"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/name_view"
-            app:layout_constraintTop_toBottomOf="@+id/name_view"
-            app:prefixText="Label"
-            tools:text="Мужской" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/origin_gender"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="Origin"
-            android:textAlignment="textStart"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@+id/origin_location_view"
-            app:layout_constraintTop_toBottomOf="@+id/status_view" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/origin_location_view"
-            style="@style/ButtonNavigationStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:minHeight="40dp"
-            android:paddingStart="0dp"
-            android:text="Земля"
-            android:textAlignment="textStart"
-            app:icon="@drawable/home_vector"
-            app:iconTint="@color/black"
-            app:layout_constraintEnd_toStartOf="@+id/last_location_view"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/status_view"
-            app:layout_constraintTop_toBottomOf="@+id/origin_gender" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/location_gender"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Last Location"
-            android:textAlignment="textStart"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@+id/last_location_view"
-            app:layout_constraintTop_toTopOf="@+id/origin_gender" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/last_location_view"
-            style="@style/ButtonNavigationStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:minHeight="40dp"
-            android:paddingStart="0dp"
-            android:paddingTop="0dp"
-            android:paddingBottom="0dp"
-            android:textAlignment="textStart"
-            app:icon="@drawable/location_vector"
-            app:iconTint="@color/black"
-            app:layout_constraintBottom_toBottomOf="@+id/origin_location_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/origin_location_view"
-            app:layout_constraintTop_toBottomOf="@+id/location_gender"
-            tools:text="Земля" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/episode_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="Episodes list"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@+id/origin_location_view"
-            app:layout_constraintTop_toBottomOf="@+id/last_location_view" />
-
-        <View
-            android:id="@+id/divider2"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_layout"
             android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:background="?android:attr/listDivider"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/episode_title" />
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/list_container"
-            android:layout_width="0dp"
             android:layout_height="0dp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider2"
-            tools:layout="@layout/fragment_episode_list" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_back">
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/avatar_view"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="30dp"
+                android:contentDescription="@string/avatar_text"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/name_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name_text"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toTopOf="@+id/name_view"
+                app:layout_constraintStart_toStartOf="@+id/name_view" />
+
+            <TextView
+                android:id="@+id/name_view"
+                style="@style/HeadingTextStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                app:layout_constraintBottom_toTopOf="@+id/genre_view"
+                app:layout_constraintEnd_toStartOf="@+id/avatar_view"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="spread_inside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/avatar_view"
+                tools:text="Данила Мерзляков" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/label_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/status_text"
+                android:textAlignment="textStart"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/status_view"
+                app:layout_constraintTop_toBottomOf="@+id/avatar_view" />
+
+            <TextView
+                android:id="@+id/status_view"
+                style="@style/DefaultTextStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:textAlignment="textStart"
+                app:layout_constraintEnd_toStartOf="@+id/species_view"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/label_status"
+                tools:text="Живой" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/label_species"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gender_text"
+                android:textAlignment="textStart"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toTopOf="@+id/species_view"
+                app:layout_constraintStart_toStartOf="@+id/species_view"
+                app:layout_constraintTop_toTopOf="@+id/label_status" />
+
+            <TextView
+                android:id="@+id/species_view"
+                style="@style/DefaultTextStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:textAlignment="textStart"
+                app:layout_constraintBottom_toBottomOf="@+id/status_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/status_view"
+                app:layout_constraintTop_toTopOf="@+id/status_view"
+                tools:text="Человек" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/label_gender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/species_text"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toTopOf="@+id/genre_view"
+                app:layout_constraintStart_toStartOf="@+id/genre_view" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/genre_view"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:textColor="@color/text_item_color"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/avatar_view"
+                app:layout_constraintEnd_toEndOf="@+id/name_view"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/name_view"
+                app:layout_constraintTop_toBottomOf="@+id/name_view"
+                app:prefixText="Label"
+                tools:text="Мужской" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/origin_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/origin_text"
+                android:textAlignment="textStart"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/origin_location_view"
+                app:layout_constraintTop_toBottomOf="@+id/status_view" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/origin_location_view"
+                style="@style/ButtonNavigationStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="40dp"
+                android:paddingStart="0dp"
+                android:textAlignment="textStart"
+                app:icon="@drawable/home_vector"
+                app:iconTint="@color/black"
+                app:layout_constraintEnd_toStartOf="@+id/last_location_view"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/status_view"
+                app:layout_constraintTop_toBottomOf="@+id/origin_title"
+                tools:ignore="RtlSymmetry" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/location_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/last_location_text"
+                android:textAlignment="textStart"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="@+id/last_location_view"
+                app:layout_constraintTop_toTopOf="@+id/origin_title" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/last_location_view"
+                style="@style/ButtonNavigationStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:minHeight="40dp"
+                android:paddingStart="0dp"
+                android:paddingTop="0dp"
+                android:paddingBottom="0dp"
+                android:textAlignment="textStart"
+                app:icon="@drawable/location_vector"
+                app:iconTint="@color/black"
+                app:layout_constraintBottom_toBottomOf="@+id/origin_location_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/origin_location_view"
+                app:layout_constraintTop_toBottomOf="@+id/location_title"
+                tools:ignore="RtlSymmetry" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/episode_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/episodes_list_text"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/origin_location_view"
+                app:layout_constraintTop_toBottomOf="@+id/last_location_view" />
+
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/dark_brown"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/episode_title" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/list_container"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider2"
+                tools:layout="@layout/fragment_episode_list" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/circularProgressBar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:progressTint="@color/black"
         android:visibility="visible"
-        app:indicatorColor="@color/teal_700"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/main_layout" />
+        app:layout_constraintTop_toTopOf="@+id/refresh_layout" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

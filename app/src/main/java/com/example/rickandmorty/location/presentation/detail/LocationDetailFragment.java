@@ -69,30 +69,36 @@ public class LocationDetailFragment extends Fragment {
         observeData(requireArguments().getInt(LocationDetailFragment.ARG_PARAM_CHARACTER_ID));
 
 
-
         return binding.getRoot();
     }
 
     private void setupButtonListeners() {
         binding.btnBack.setOnClickListener(view -> onNavigationListener.toBackStack());
 
+        binding.refreshLayout.setOnRefreshListener(() -> viewModel.getLocation(mLocation.getId()));
+
     }
 
 
-    private void observeData(int anInt) {
-        viewModel.getLocation(anInt);
+    private void observeData(int mId) {
+        viewModel.getLocation(mId);
         viewModel.getLocationLiveData().observe(getViewLifecycleOwner(), characterDetail -> {
             mLocation = characterDetail;
             updateViewDetail();
-            getChildFragmentManager().beginTransaction()
-                    .addToBackStack(null)
-                    .replace(binding.characterList.getId(), CharacterListFragment.newInstance(CharacterListFragment.getTypeListOnly(), mLocation.getResidents()))
-                    .commit();
+            setupCharacterList();
 
         });
     }
 
+    private void setupCharacterList(){
+        getChildFragmentManager().beginTransaction()
+                .addToBackStack(null)
+                .replace(binding.characterList.getId(), CharacterListFragment.newInstance(CharacterListFragment.getTypeListOnly(), mLocation.getResidents()))
+                .commit();
+    }
+
     private void updateViewDetail() {
+        binding.refreshLayout.setRefreshing(false);
         binding.circularProgressBar.setVisibility(View.INVISIBLE);
         binding.mainLayout.setVisibility(View.VISIBLE);
         if (mLocation != null) {

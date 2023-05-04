@@ -146,28 +146,28 @@
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Female" />
+            android:text="@string/female_text" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/male_chip"
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Male" />
+            android:text="@string/male_text" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/genderless_chip"
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Genderless" />
+            android:text="@string/genderless_text" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/unknown_gender_chip"
             style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Unknown" />
+            android:text="@string/unknown_text" />
 
     </com.google.android.material.chip.ChipGroup>
 

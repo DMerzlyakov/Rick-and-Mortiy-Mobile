@@ -9,6 +9,7 @@
     android:padding="10dp">
 
     <ImageView
+        android:contentDescription="@string/avatar_text"
         android:id="@+id/avatar_view"
         android:layout_width="120dp"
         android:layout_height="120dp"
@@ -38,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:gravity="center"
-        android:text="Status"
+        android:text="@string/status_text"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@+id/status_view"
         app:layout_constraintStart_toStartOf="@+id/status_view"
@@ -63,7 +64,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Gender"
+        android:text="@string/gender_text"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@+id/genre_view"
         app:layout_constraintStart_toStartOf="@+id/genre_view"
@@ -92,7 +93,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:gravity="center"
-        android:text="Species"
+        android:text="@string/species_text"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@+id/species_view"
         app:layout_constraintStart_toStartOf="@+id/species_view"

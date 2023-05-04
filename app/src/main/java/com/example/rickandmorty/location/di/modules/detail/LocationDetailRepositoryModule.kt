@@ -22,7 +22,6 @@ class LocationDetailRepositoryModule {
     }
 
 
-
     @Singleton
     @Provides
     fun provideLocationListApi(retrofit: Retrofit): LocationDetailApi {

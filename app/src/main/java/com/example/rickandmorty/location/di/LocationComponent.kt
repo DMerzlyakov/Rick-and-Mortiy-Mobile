@@ -1,8 +1,8 @@
 package com.example.rickandmorty.location.di
 
+import com.example.rickandmorty.location.di.bridge.LocationDep
 import com.example.rickandmorty.location.di.modules.detail.LocationDetailRepositoryModule
 import com.example.rickandmorty.location.di.modules.detail.LocationDetailUseCaseModule
-import com.example.rickandmorty.location.di.bridge.LocationDep
 import com.example.rickandmorty.location.di.modules.list.LocationListRepositoryModule
 import com.example.rickandmorty.location.di.modules.list.LocationListUseCaseModule
 import com.example.rickandmorty.location.presentation.detail.LocationDetailFragment

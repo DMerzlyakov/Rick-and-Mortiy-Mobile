@@ -25,9 +25,7 @@ class CharacterListCacheRemoteMediator(
         return try {
 
             val characters = getCharactersListByIdByRemote(characterListFilter)
-
             characterListDao.saveCache(characters)
-
             MediatorResult.Success(true)
 
         } catch (e: Exception) {
@@ -39,7 +37,8 @@ class CharacterListCacheRemoteMediator(
     private suspend fun getCharactersListByIdByRemote(
         characterListFilter: List<Int>
     ): List<CharacterForDetailCacheEntity> {
-        val characters =  characterListApi.getCharacterListByIdList(characterListFilter.toString()).body()
+        val characters =
+            characterListApi.getCharacterListByIdList(characterListFilter.toString()).body()
         return dtoToCharacterCacheEntityMapper(characters!!)
     }
 }

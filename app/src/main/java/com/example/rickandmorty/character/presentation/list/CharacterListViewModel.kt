@@ -9,16 +9,20 @@ import androidx.paging.map
 import com.example.rickandmorty.character.domain.list.GetCharacterListByIdUseCase
 import com.example.rickandmorty.character.domain.list.GetCharacterListUseCase
 import com.example.rickandmorty.character.domain.list.model.CharacterFilter
-import com.example.rickandmorty.character.presentation.list.mapper.toCharacterItem
+import com.example.rickandmorty.character.presentation.list.mapper.CharacterDomainToCharacterUiModelMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class CharacterListViewModel @Inject constructor(
     private val getCharacterListUseCase: GetCharacterListUseCase,
-    private val getCharacterListByIdUseCase: GetCharacterListByIdUseCase
+    private val getCharacterListByIdUseCase: GetCharacterListByIdUseCase,
+    private val characterDomainToCharacterUiModelMapper: CharacterDomainToCharacterUiModelMapper
 ) : ViewModel() {
 
 
@@ -30,18 +34,18 @@ class CharacterListViewModel @Inject constructor(
         .flatMapLatest {
             getCharacterListUseCase(it.name, it.status, it.species, it.gender)
                 .map { pagingData ->
-                    pagingData.map { item -> item.toCharacterItem() }
+                    pagingData.map { item -> characterDomainToCharacterUiModelMapper(item) }
                 }
         }
         .cachedIn(viewModelScope)
 
 
     suspend fun getListCharacterById(idList: List<Int>) =
-            getCharacterListByIdUseCase(idList)
-                .map { pagingData ->
-                    pagingData.map { item -> item.toCharacterItem() }
-                }.flowOn(Dispatchers.IO)
-                .cachedIn(viewModelScope)
+        getCharacterListByIdUseCase(idList)
+            .map { pagingData ->
+                pagingData.map { item -> characterDomainToCharacterUiModelMapper(item) }
+            }.flowOn(Dispatchers.IO)
+            .cachedIn(viewModelScope)
 
 
     fun setSearchByFilter(item: CharacterFilter) {

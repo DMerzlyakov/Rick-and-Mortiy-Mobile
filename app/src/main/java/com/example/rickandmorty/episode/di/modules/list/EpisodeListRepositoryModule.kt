@@ -5,6 +5,10 @@ import androidx.room.Room
 import com.example.rickandmorty.episode.data.list.EpisodeListRepositoryImpl
 import com.example.rickandmorty.episode.data.list.local.EpisodeDao
 import com.example.rickandmorty.episode.data.list.local.EpisodesDatabase
+import com.example.rickandmorty.episode.data.list.mapper.EpisodeCacheEntityToEpisodeDomainPaginMapper
+import com.example.rickandmorty.episode.data.list.mapper.EpisodeDtoToEpisodeEntityMapper
+import com.example.rickandmorty.episode.data.list.mapper.EpisodeEntityToEpisodeDomainPagingMapper
+import com.example.rickandmorty.episode.data.list.mapper.EpisodeResultDtoToEpisodeCacheEntityMapper
 import com.example.rickandmorty.episode.data.list.remote.EpisodeListApi
 import com.example.rickandmorty.episode.domain.list.EpisodeListRepository
 import dagger.Module
@@ -48,10 +52,19 @@ class EpisodeListRepositoryModule {
 
     @Singleton
     @Provides
-    fun provideEpisodeListRepositoryImpl(episodeListApi: EpisodeListApi, episodeDao: EpisodeDao): EpisodeListRepositoryImpl {
+    fun provideEpisodeListRepositoryImpl(
+        episodeListApi: EpisodeListApi, episodeDao: EpisodeDao,
+        entityCacheToDomainPagingMapper: EpisodeCacheEntityToEpisodeDomainPaginMapper,
+        entityToDomainPagingMapper: EpisodeEntityToEpisodeDomainPagingMapper,
+        dtoToEntityMapper: EpisodeDtoToEpisodeEntityMapper,
+        dtoToCacheEntityMapper: EpisodeResultDtoToEpisodeCacheEntityMapper
+    ): EpisodeListRepositoryImpl {
         return EpisodeListRepositoryImpl(
-            episodeListApi,
-            episodeDao
+            episodeListApi, episodeDao,
+            entityCacheToDomainPagingMapper,
+            entityToDomainPagingMapper,
+            dtoToEntityMapper,
+            dtoToCacheEntityMapper
         )
     }
 

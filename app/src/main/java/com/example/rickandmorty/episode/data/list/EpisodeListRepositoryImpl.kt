@@ -5,7 +5,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.rickandmorty.episode.data.list.local.EpisodeDao
-import com.example.rickandmorty.episode.data.list.mapper.toEpisodeDomain
+import com.example.rickandmorty.episode.data.list.mapper.*
 import com.example.rickandmorty.episode.data.list.paging.EpisodeListCacheRemoteMediator
 import com.example.rickandmorty.episode.data.list.paging.EpisodeListRemoteMediator
 import com.example.rickandmorty.episode.data.list.remote.EpisodeListApi
@@ -18,7 +18,11 @@ import javax.inject.Inject
 @OptIn(ExperimentalPagingApi::class)
 class EpisodeListRepositoryImpl @Inject constructor(
     private val episodeListApi: EpisodeListApi,
-    private val episodeDao: EpisodeDao
+    private val episodeDao: EpisodeDao,
+    private val entityCacheToDomainPagingMapper: EpisodeCacheEntityToEpisodeDomainPaginMapper,
+    private val entityToDomainPagingMapper: EpisodeEntityToEpisodeDomainPagingMapper,
+    private val dtoToEntityMapper: EpisodeDtoToEpisodeEntityMapper,
+    private val dtoToCacheEntityMapper: EpisodeResultDtoToEpisodeCacheEntityMapper
 
 ) : EpisodeListRepository {
     override suspend fun getPagedEpisode(
@@ -34,12 +38,13 @@ class EpisodeListRepositoryImpl @Inject constructor(
             remoteMediator = EpisodeListRemoteMediator(
                 episodeListApi,
                 episodeDao,
+                dtoToEntityMapper,
                 name,
                 episode,
             ),
             pagingSourceFactory = { episodeDao.getPagingEpisode(name, episode) }
         ).flow
-            .map { it.toEpisodeDomain() }
+            .map { entityToDomainPagingMapper(it) }
     }
 
     override suspend fun getPagedEpisodesById(episodeIdList: List<Int>): Flow<PagingData<EpisodeDomain>> {
@@ -52,11 +57,12 @@ class EpisodeListRepositoryImpl @Inject constructor(
             remoteMediator = EpisodeListCacheRemoteMediator(
                 episodeListApi,
                 episodeDao,
+                dtoToCacheEntityMapper,
                 episodeIdList
             ),
             pagingSourceFactory = { episodeDao.getPagingEpisodeCache(episodeIdList) }
         ).flow
-            .map { it.toEpisodeDomain() }
+            .map { entityCacheToDomainPagingMapper(it) }
     }
 
     private companion object {

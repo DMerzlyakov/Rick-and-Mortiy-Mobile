@@ -6,7 +6,7 @@ import com.example.rickandmorty.location.data.detail.remote.LocationDetailApi
 import com.example.rickandmorty.location.data.list.local.LocationDao
 import com.example.rickandmorty.location.domain.detail.LocationDetailRepository
 import com.example.rickandmorty.location.domain.detail.model.LocationDetailDomain
-import io.reactivex.Observable
+import io.reactivex.Single
 import javax.inject.Inject
 
 class LocationDetailRepositoryImpl @Inject constructor(
@@ -15,10 +15,10 @@ class LocationDetailRepositoryImpl @Inject constructor(
     private val dtoToEntityMapper: LocationDetailDtoToLocationEntityMapper,
     private val entityToDomainMapper: LocationEntityToLocationDetailDomainMapper
 ) : LocationDetailRepository {
-    override fun getLocationDetail(mId: Int): Observable<LocationDetailDomain> {
+    override fun getLocationDetail(mId: Int): Single<LocationDetailDomain> {
 
         return getLocationDetailByRemote(mId).flatMap {
-            locationDetailDao.saveLocation(it).andThen(Observable.just(entityToDomainMapper(it)))
+            locationDetailDao.saveLocation(it).andThen(Single.just(entityToDomainMapper(it)))
         }.onErrorResumeNext { _: Throwable ->
             locationDetailDao.getLocationById(mId).map {
                 entityToDomainMapper(it)

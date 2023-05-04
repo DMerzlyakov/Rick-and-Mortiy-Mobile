@@ -7,7 +7,7 @@
     <string name="filter_text">Filter</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="search_species_text">Search by species</string>
-    <string name="search_episode_text">Search by episode</string>
+    <string name="search_episode_text">Search by code</string>
     <string name="confirm_text">Confirm</string>
     <string name="clear_filter_text">Clear Filter</string>
     <string name="choose_gender_text">Choose gender</string>
@@ -15,4 +15,26 @@
     <string name="dead_text">Dead</string>
     <string name="alive_text">Alive</string>
     <string name="choose_status_text">Choose status</string>
+    <string name="character_detail_text">Character Detail</string>
+    <string name="avatar_text">avatar</string>
+    <string name="name_text">Name</string>
+    <string name="status_text">Status</string>
+    <string name="gender_text">Gender</string>
+    <string name="species_text">Species</string>
+    <string name="origin_text">Origin</string>
+    <string name="last_location_text">Last Location</string>
+    <string name="episodes_list_text">Episodes list</string>
+    <string name="button_back_text">Back</string>
+    <string name="character_list_empty_text">Character list empty</string>
+    <string name="episode_detail_text">Episode Detail</string>
+    <string name="code_text">Code</string>
+    <string name="air_date_text">Air Date</string>
+    <string name="characters_in_the_episode_text">Characters in the episode</string>
+    <string name="female_text">Female</string>
+    <string name="male_text">Male</string>
+    <string name="genderless_text">Genderless</string>
+    <string name="location_detail_text">Location Detail</string>
+    <string name="type_text">Type</string>
+    <string name="dimension_text">Dimension</string>
+    <string name="resident_list_text">Resident list</string>
 </resources>

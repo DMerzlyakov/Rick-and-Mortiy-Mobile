@@ -38,13 +38,18 @@ class LocationRemoteMediator(
             MediatorResult.Success(
                 endOfPaginationReached = locations.size < limit
             )
-        } catch (e: Exception){
+        } catch (e: Exception) {
             MediatorResult.Error(e)
         }
     }
 
-    private suspend fun getLocationsByRemote(name: String, type: String, dimension: String): List<LocationEntity> {
-        return locationApi.getAllLocation(pageIndex, name, type, dimension).body()!!.toLocationEntity()
+    private suspend fun getLocationsByRemote(
+        name: String,
+        type: String,
+        dimension: String
+    ): List<LocationEntity> {
+        return locationApi.getAllLocation(pageIndex, name, type, dimension).body()!!
+            .toLocationEntity()
     }
 
     private fun getPagedIndex(loadType: LoadType): Int? {

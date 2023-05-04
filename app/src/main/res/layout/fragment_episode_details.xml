@@ -8,6 +8,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_back"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:contentDescription="@string/button_back_text"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="10dp"
@@ -29,115 +30,126 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:text="Episode Detail"
+        android:text="@string/episode_detail_text"
         app:layout_constraintBottom_toBottomOf="@+id/btn_back"
         app:layout_constraintStart_toEndOf="@+id/btn_back"
         app:layout_constraintTop_toTopOf="@+id/btn_back" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main_layout"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_back">
 
-        <TextView
-            android:id="@+id/name_view"
-            style="@style/HeadingTextStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:textAlignment="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Эпизод 1" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/code_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="Code"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toStartOf="@+id/air_date_view"
-            app:layout_constraintStart_toStartOf="@+id/episode_view"
-            app:layout_constraintTop_toBottomOf="@+id/name_view" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/air_date_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Air Date"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="@+id/air_date_view"
-            app:layout_constraintStart_toStartOf="@+id/air_date_view"
-            app:layout_constraintTop_toTopOf="@+id/code_title" />
-
-        <TextView
-            android:id="@+id/air_date_view"
-            style="@style/DefaultTextStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:textAlignment="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/episode_view"
-            app:layout_constraintTop_toBottomOf="@+id/air_date_title"
-            tools:text="12 марта 12" />
-
-        <TextView
-            android:id="@+id/episode_view"
-            style="@style/DefaultTextStyle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:textAlignment="center"
-            app:layout_constraintEnd_toStartOf="@+id/air_date_view"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/code_title"
-            tools:text="1вфыв1" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/character_list_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Characters in the episode"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/episode_view" />
-
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/character_list_container"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider4"
-            tools:layout="@layout/fragment_character_list" />
-
-        <View
-            android:id="@+id/divider4"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_layout"
             android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:background="?android:attr/listDivider"
-            app:layout_constraintTop_toBottomOf="@+id/character_list_title"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:layout_height="0dp"
+            android:visibility="invisible">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/name_view"
+                style="@style/HeadingTextStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Эпизод 1" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/code_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/code_text"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@+id/air_date_view"
+                app:layout_constraintStart_toStartOf="@+id/episode_view"
+                app:layout_constraintTop_toBottomOf="@+id/name_view" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/air_date_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/air_date_text"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@+id/air_date_view"
+                app:layout_constraintStart_toStartOf="@+id/air_date_view"
+                app:layout_constraintTop_toTopOf="@+id/code_title" />
+
+            <TextView
+                android:id="@+id/air_date_view"
+                style="@style/DefaultTextStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/episode_view"
+                app:layout_constraintTop_toBottomOf="@+id/air_date_title"
+                tools:text="12 марта 12" />
+
+            <TextView
+                android:id="@+id/episode_view"
+                style="@style/DefaultTextStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toStartOf="@+id/air_date_view"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/code_title"
+                tools:text="1вфыв1" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/character_list_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/characters_in_the_episode_text"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/episode_view" />
+
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/character_list_container"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider4"
+                tools:layout="@layout/fragment_character_list" />
+
+            <View
+                android:id="@+id/divider4"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/dark_brown"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/character_list_title" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/circularProgressBar"
@@ -149,6 +161,6 @@
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/main_layout" />
+        app:layout_constraintTop_toTopOf="@+id/refresh_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

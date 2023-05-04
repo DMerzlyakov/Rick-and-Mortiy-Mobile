@@ -25,7 +25,7 @@ class SplashScreenActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         lifecycleScope.launch {
-            delay(3000L)
+            delay(2000L)
             startActivity(Intent(this@SplashScreenActivity, MainActivity::class.java))
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
             finish()

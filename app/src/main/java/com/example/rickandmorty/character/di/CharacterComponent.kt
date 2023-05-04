@@ -1,8 +1,8 @@
 package com.example.rickandmorty.character.di
 
+import com.example.rickandmorty.character.di.bridge.CharactersDep
 import com.example.rickandmorty.character.di.modules.detail.CharacterDetailRepositoryModule
 import com.example.rickandmorty.character.di.modules.detail.CharacterDetailUseCaseModule
-import com.example.rickandmorty.character.di.bridge.CharactersDep
 import com.example.rickandmorty.character.di.modules.list.CharacterListRepositoryModule
 import com.example.rickandmorty.character.di.modules.list.CharactersListUseCaseModule
 import com.example.rickandmorty.character.presentation.detail.CharacterDetailsFragment
