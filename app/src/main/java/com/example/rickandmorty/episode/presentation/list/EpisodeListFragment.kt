@@ -19,7 +19,7 @@ import com.example.rickandmorty.episode.domain.list.model.EpisodeFilter
 import com.example.rickandmorty.episode.presentation.detail.EpisodeDetailsFragment
 import com.example.rickandmorty.episode.presentation.list.model.EpisodeUi
 import com.example.rickandmorty.episode.presentation.list.recyclerView.EpisodesRecyclerViewAdapter
-import com.example.rickandmorty.extention_util.OnClickRecyclerViewInterface
+import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
 import com.example.rickandmorty.main.presentation.OnNavigationListener
 import com.example.rickandmorty.main.presentation.RickAndMortyApp
 import com.example.rickandmorty.universal_filter.FilterFragment

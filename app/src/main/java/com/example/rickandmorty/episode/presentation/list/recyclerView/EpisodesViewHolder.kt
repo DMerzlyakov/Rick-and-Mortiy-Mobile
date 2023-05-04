@@ -3,7 +3,7 @@ package com.example.rickandmorty.episode.presentation.list.recyclerView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmorty.databinding.ItemEpisodeBinding
 import com.example.rickandmorty.episode.presentation.list.model.EpisodeUi
-import com.example.rickandmorty.extention_util.OnClickRecyclerViewInterface
+import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
 
 class EpisodesViewHolder(
     private val binding: ItemEpisodeBinding,

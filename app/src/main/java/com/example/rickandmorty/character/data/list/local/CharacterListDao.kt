@@ -4,7 +4,9 @@ import androidx.paging.PagingSource
 import androidx.room.*
 import com.example.rickandmorty.character.data.list.local.model.CharacterEntity
 import com.example.rickandmorty.character.data.list.local.model.CharacterForDetailCacheEntity
+import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 @Dao
 interface CharacterListDao {
@@ -23,9 +25,11 @@ interface CharacterListDao {
         gender: String,
     ): PagingSource<Int, CharacterEntity>
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(characters: List<CharacterEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun saveCharacter(characters: CharacterEntity): Completable
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -36,6 +40,7 @@ interface CharacterListDao {
         characterListFilter: List<Int>,
     ): PagingSource<Int, CharacterForDetailCacheEntity>
 
+
     @Query("SELECT * from characters WHERE id = :idCharacter")
-    fun getCharacterById(idCharacter: Int): Observable<CharacterEntity>
+    fun getCharacterById(idCharacter: Int): Single<CharacterEntity>
 }

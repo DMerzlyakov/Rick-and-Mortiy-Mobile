@@ -1,11 +1,10 @@
 package com.example.rickandmorty.location.di.modules.detail
 
-import android.content.Context
-import androidx.room.Room
 import com.example.rickandmorty.location.data.detail.LocationDetailRepositoryImpl
-import com.example.rickandmorty.location.data.detail.local.LocationDetailDao
-import com.example.rickandmorty.location.data.detail.local.LocationDatabase
+import com.example.rickandmorty.location.data.detail.mapper.LocationDetailDtoToLocationEntityMapper
+import com.example.rickandmorty.location.data.detail.mapper.LocationEntityToLocationDetailDomainMapper
 import com.example.rickandmorty.location.data.detail.remote.LocationDetailApi
+import com.example.rickandmorty.location.data.list.local.LocationDao
 import com.example.rickandmorty.location.domain.detail.LocationDetailRepository
 import dagger.Module
 import dagger.Provides
@@ -23,16 +22,6 @@ class LocationDetailRepositoryModule {
     }
 
 
-    @Singleton
-    @Provides
-    fun provideLocationDatabase(context: Context): LocationDatabase {
-        return Room.databaseBuilder(
-            context,
-            LocationDatabase::class.java,
-            "location"
-        ).fallbackToDestructiveMigration()
-            .build()
-    }
 
     @Singleton
     @Provides
@@ -40,19 +29,18 @@ class LocationDetailRepositoryModule {
         return retrofit.create(LocationDetailApi::class.java)
     }
 
-    @Singleton
-    @Provides
-    fun provideLocationDao(database: LocationDatabase): LocationDetailDao {
-        return database.locationDao()
-    }
-
 
     @Singleton
     @Provides
-    fun provideLocationDetailRepositoryImpl(locationDetailApi: LocationDetailApi, locationDetailDao: LocationDetailDao): LocationDetailRepositoryImpl {
+    fun provideLocationDetailRepositoryImpl(
+        locationDetailApi: LocationDetailApi,
+        locationDao: LocationDao,
+        dtoToEntityMapper: LocationDetailDtoToLocationEntityMapper,
+        entityToDomainMapper: LocationEntityToLocationDetailDomainMapper
+    ): LocationDetailRepositoryImpl {
         return LocationDetailRepositoryImpl(
-            locationDetailApi,
-            locationDetailDao
+            locationDetailApi, locationDao,
+            dtoToEntityMapper, entityToDomainMapper
         )
     }
 

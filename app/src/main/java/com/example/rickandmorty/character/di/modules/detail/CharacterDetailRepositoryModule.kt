@@ -1,8 +1,8 @@
 package com.example.rickandmorty.character.di.modules.detail
 
-import android.content.Context
-import androidx.room.Room
 import com.example.rickandmorty.character.data.detail.CharacterDetailRepositoryImpl
+import com.example.rickandmorty.character.data.detail.mapper.CharacterDetailDtoToCharacterEntityMapper
+import com.example.rickandmorty.character.data.detail.mapper.CharacterEntityToCharacterDetailDomainMapper
 import com.example.rickandmorty.character.data.detail.remote.CharacterDetailApi
 import com.example.rickandmorty.character.data.list.local.CharacterListDao
 import com.example.rickandmorty.character.domain.detail.CharacterDetailRepository
@@ -16,10 +16,17 @@ class CharacterDetailRepositoryModule {
 
     @Singleton
     @Provides
-    fun provideCharacterDetailRepositoryImpl(characterDetailApi: CharacterDetailApi, characterListDao: CharacterListDao): CharacterDetailRepositoryImpl {
+    fun provideCharacterDetailRepositoryImpl(
+        characterDetailApi: CharacterDetailApi,
+        characterListDao: CharacterListDao,
+        dtoToEntityMapper: CharacterDetailDtoToCharacterEntityMapper,
+        entityTpDomainMapper: CharacterEntityToCharacterDetailDomainMapper
+    ): CharacterDetailRepositoryImpl {
         return CharacterDetailRepositoryImpl(
             characterDetailApi,
-            characterListDao
+            characterListDao,
+            dtoToEntityMapper,
+            entityTpDomainMapper
         )
     }
 

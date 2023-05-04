@@ -6,13 +6,14 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.example.rickandmorty.character.data.list.local.CharacterListDao
 import com.example.rickandmorty.character.data.list.local.model.CharacterForDetailCacheEntity
-import com.example.rickandmorty.character.data.list.mapper.toCharacterCacheListEntity
+import com.example.rickandmorty.character.data.list.mapper.CharacterResultDtoToCharacterCacheEntityMapper
 import com.example.rickandmorty.character.data.list.remote.CharacterListApi
 
 @OptIn(ExperimentalPagingApi::class)
 class CharacterListCacheRemoteMediator(
     private val characterListApi: CharacterListApi,
     private val characterListDao: CharacterListDao,
+    private val dtoToCharacterCacheEntityMapper: CharacterResultDtoToCharacterCacheEntityMapper,
     private val characterListFilter: List<Int>
 ) : RemoteMediator<Int, CharacterForDetailCacheEntity>() {
 
@@ -27,10 +28,7 @@ class CharacterListCacheRemoteMediator(
 
             characterListDao.saveCache(characters)
 
-
-            MediatorResult.Success(
-                endOfPaginationReached = true
-            )
+            MediatorResult.Success(true)
 
         } catch (e: Exception) {
             MediatorResult.Error(e)
@@ -41,7 +39,7 @@ class CharacterListCacheRemoteMediator(
     private suspend fun getCharactersListByIdByRemote(
         characterListFilter: List<Int>
     ): List<CharacterForDetailCacheEntity> {
-        return characterListApi.getCharacterListByIdList(characterListFilter.toString()).body()!!
-            .toCharacterCacheListEntity()
+        val characters =  characterListApi.getCharacterListByIdList(characterListFilter.toString()).body()
+        return dtoToCharacterCacheEntityMapper(characters!!)
     }
 }

@@ -1,15 +1,22 @@
 package com.example.rickandmorty.episode.data.detail.mapper
 
+import com.example.rickandmorty.character.data.detail.remote.model.CharacterDetailDTO
+import com.example.rickandmorty.character.data.list.local.model.CharacterEntity
 import com.example.rickandmorty.episode.data.list.local.model.EpisodeEntity
 import com.example.rickandmorty.episode.domain.detail.model.EpisodeDetailDomain
+import javax.inject.Inject
 
 
-fun EpisodeEntity.toEpisodeDetailDomain(): EpisodeDetailDomain {
-    return EpisodeDetailDomain(
-        this.id,
-        this.name,
-        this.airDate,
-        this.episode,
-        this.characters
-    )
+class EpisodeEntityToEpisodeDetailDomain @Inject constructor() {
+
+    operator fun invoke(item: EpisodeEntity): EpisodeDetailDomain {
+
+        return EpisodeDetailDomain(
+            item.id,
+            item.name,
+            item.airDate,
+            item.episode,
+            item.characters
+        )
+    }
 }

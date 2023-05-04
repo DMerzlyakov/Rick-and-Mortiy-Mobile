@@ -5,7 +5,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.example.rickandmorty.location.data.list.local.LocationDao
-import com.example.rickandmorty.location.data.detail.local.model.LocationEntity
+import com.example.rickandmorty.location.data.list.local.model.LocationEntity
 import com.example.rickandmorty.location.data.list.mapper.toLocationEntity
 import com.example.rickandmorty.location.data.list.remote.LocationListApi
 

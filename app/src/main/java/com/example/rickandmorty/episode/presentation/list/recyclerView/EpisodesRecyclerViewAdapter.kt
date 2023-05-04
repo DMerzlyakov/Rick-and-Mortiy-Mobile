@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import com.example.rickandmorty.databinding.ItemEpisodeBinding
 import com.example.rickandmorty.episode.presentation.list.model.EpisodeUi
-import com.example.rickandmorty.extention_util.OnClickRecyclerViewInterface
+import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
 
 class EpisodesRecyclerViewAdapter(private val onClickRecyclerViewInterface: OnClickRecyclerViewInterface<EpisodeUi>) :
     PagingDataAdapter<EpisodeUi, EpisodesViewHolder>(EpisodesDiffUtil()) {

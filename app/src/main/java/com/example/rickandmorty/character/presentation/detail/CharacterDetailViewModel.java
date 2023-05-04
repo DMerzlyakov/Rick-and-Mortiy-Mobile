@@ -13,6 +13,8 @@ import com.example.rickandmorty.character.presentation.detail.model.CharacterDet
 
 import javax.inject.Inject;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class CharacterDetailViewModel extends ViewModel {
@@ -31,12 +33,26 @@ public class CharacterDetailViewModel extends ViewModel {
     public LiveData<CharacterDetailUi> getCharacterLiveData() {
         return characterLiveData ;
     }
+    public Disposable disposable;
+
 
 
     public void getCharacter(int CharacterId) {
-        getCharacterDetailUseCase.invoke(CharacterId)
+        disposable = getCharacterDetailUseCase.invoke(CharacterId)
                 .subscribeOn(Schedulers.io())
-                .subscribe(this::handleResults, this::handleError);
+                .subscribeWith(new DisposableSingleObserver<CharacterDetailDomain>() {
+
+                    @Override
+                    public void onSuccess(CharacterDetailDomain characterDetailDomain) {
+                        handleResults(characterDetailDomain);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        handleError(e);
+                    }
+
+                });
     }
 
 

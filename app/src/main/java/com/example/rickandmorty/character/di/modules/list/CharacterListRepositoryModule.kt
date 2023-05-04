@@ -5,6 +5,10 @@ import androidx.room.Room
 import com.example.rickandmorty.character.data.list.CharacterListRepositoryImpl
 import com.example.rickandmorty.character.data.list.local.CharacterDatabase
 import com.example.rickandmorty.character.data.list.local.CharacterListDao
+import com.example.rickandmorty.character.data.list.mapper.CharacterCacheEntityToCharacterDomainPagingMapper
+import com.example.rickandmorty.character.data.list.mapper.CharacterEntityToCharacterDomainPagingMapper
+import com.example.rickandmorty.character.data.list.mapper.CharacterPageDtoToCharacterEntityMapper
+import com.example.rickandmorty.character.data.list.mapper.CharacterResultDtoToCharacterCacheEntityMapper
 import com.example.rickandmorty.character.data.list.remote.CharacterListApi
 import com.example.rickandmorty.character.domain.list.CharacterListRepository
 import dagger.Module
@@ -48,10 +52,21 @@ class CharacterListRepositoryModule {
 
     @Singleton
     @Provides
-    fun provideCharacterListRepositoryImpl(characterListApi: CharacterListApi, characterListDao: CharacterListDao): CharacterListRepositoryImpl {
+    fun provideCharacterListRepositoryImpl(
+        characterListApi: CharacterListApi,
+        characterListDao: CharacterListDao,
+        entityToDomainPagingMapper: CharacterEntityToCharacterDomainPagingMapper,
+        cacheEntityToDomainPagingMapper: CharacterCacheEntityToCharacterDomainPagingMapper,
+        dtoToCharacterEntityMapper: CharacterPageDtoToCharacterEntityMapper,
+        dtoToCharacterCacheEntityMapper: CharacterResultDtoToCharacterCacheEntityMapper
+    ): CharacterListRepositoryImpl {
         return CharacterListRepositoryImpl(
             characterListApi,
-            characterListDao
+            characterListDao,
+            entityToDomainPagingMapper,
+            cacheEntityToDomainPagingMapper,
+            dtoToCharacterEntityMapper,
+            dtoToCharacterCacheEntityMapper
         )
     }
 

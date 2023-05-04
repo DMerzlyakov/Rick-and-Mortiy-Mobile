@@ -1,8 +1,9 @@
 package com.example.rickandmorty.location.data.detail
 
-import com.example.rickandmorty.location.data.detail.local.LocationDetailDao
+import com.example.rickandmorty.location.data.detail.mapper.LocationDetailDtoToLocationEntityMapper
+import com.example.rickandmorty.location.data.detail.mapper.LocationEntityToLocationDetailDomainMapper
 import com.example.rickandmorty.location.data.detail.remote.LocationDetailApi
-import com.example.rickandmorty.location.data.detail.local.model.LocationEntity
+import com.example.rickandmorty.location.data.list.local.LocationDao
 import com.example.rickandmorty.location.domain.detail.LocationDetailRepository
 import com.example.rickandmorty.location.domain.detail.model.LocationDetailDomain
 import io.reactivex.Observable
@@ -10,31 +11,24 @@ import javax.inject.Inject
 
 class LocationDetailRepositoryImpl @Inject constructor(
     private val locationDetailApi: LocationDetailApi,
-    private val locationDetailDao: LocationDetailDao
+    private val locationDetailDao: LocationDao,
+    private val dtoToEntityMapper: LocationDetailDtoToLocationEntityMapper,
+    private val entityToDomainMapper: LocationEntityToLocationDetailDomainMapper
 ) : LocationDetailRepository {
     override fun getLocationDetail(mId: Int): Observable<LocationDetailDomain> {
 
         return getLocationDetailByRemote(mId).flatMap {
-            locationDetailDao.update(it).andThen(Observable.just(LocationDetailDomain(it.id, it.name, it.type, it.dimension, it.residents)))
+            locationDetailDao.saveLocation(it).andThen(Observable.just(entityToDomainMapper(it)))
         }.onErrorResumeNext { _: Throwable ->
             locationDetailDao.getLocationById(mId).map {
-                LocationDetailDomain(
-                    it.id, it.name, it.type, it.dimension, it.residents
-                )
+                entityToDomainMapper(it)
             }
-
         }
     }
 
     private fun getLocationDetailByRemote(mId: Int) =
         locationDetailApi.getDetailCharacter(mId).map {
-            LocationEntity(
-                it.id,
-                it.name,
-                it.type,
-                it.dimension,
-                it.residents.map { item -> item.split("/").last().toInt() }
-            )
+            dtoToEntityMapper(it)
         }
 
 }

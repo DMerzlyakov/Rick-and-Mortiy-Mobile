@@ -3,7 +3,6 @@ package com.example.rickandmorty.character.presentation.list
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,7 @@ import com.example.rickandmorty.character.presentation.detail.CharacterDetailsFr
 import com.example.rickandmorty.character.presentation.list.model.CharacterUi
 import com.example.rickandmorty.character.presentation.list.recycler_view.CharactersRecyclerViewAdapter
 import com.example.rickandmorty.databinding.FragmentCharacterListBinding
-import com.example.rickandmorty.extention_util.OnClickRecyclerViewInterface
+import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
 import com.example.rickandmorty.main.presentation.OnNavigationListener
 import com.example.rickandmorty.main.presentation.RickAndMortyApp
 import com.example.rickandmorty.universal_filter.FilterFragment
@@ -196,7 +195,6 @@ class CharacterListFragment : Fragment() {
     }
 
     private fun observeFullCharacterList() {
-//        adapter.refresh()
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getFullListCharacter().collectLatest { pagingData ->
                 adapter.submitData(pagingData)
@@ -205,7 +203,6 @@ class CharacterListFragment : Fragment() {
     }
 
     private fun observeCharacterListById(idList: List<Int>) {
-//        adapter.refresh()
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getListCharacterById(idList).collectLatest { pagingData ->
                 adapter.submitData(pagingData)

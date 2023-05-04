@@ -1,9 +1,8 @@
 package com.example.rickandmorty.character.data.list
 
-import android.util.Log
 import androidx.paging.*
 import com.example.rickandmorty.character.data.list.local.CharacterListDao
-import com.example.rickandmorty.character.data.list.mapper.toCharacterDomainModel
+import com.example.rickandmorty.character.data.list.mapper.*
 import com.example.rickandmorty.character.data.list.paging.CharacterListCacheRemoteMediator
 import com.example.rickandmorty.character.data.list.paging.CharacterListRemoteMediator
 import com.example.rickandmorty.character.data.list.remote.CharacterListApi
@@ -16,7 +15,11 @@ import javax.inject.Inject
 @OptIn(ExperimentalPagingApi::class)
 class CharacterListRepositoryImpl @Inject constructor(
     private val characterListApi: CharacterListApi,
-    private val characterListDao: CharacterListDao
+    private val characterListDao: CharacterListDao,
+    private val entityToDomainPagingMapper: CharacterEntityToCharacterDomainPagingMapper,
+    private val cacheEntityToDomainPagingMapper: CharacterCacheEntityToCharacterDomainPagingMapper,
+    private val dtoToCharacterEntityMapper: CharacterPageDtoToCharacterEntityMapper,
+    private val dtoToCharacterCacheEntityMapper: CharacterResultDtoToCharacterCacheEntityMapper
 ) : CharacterListRepository {
 
     override suspend fun getPagedCharacters(
@@ -24,7 +27,6 @@ class CharacterListRepositoryImpl @Inject constructor(
         species: String, gender: String,
         characterListFilter: List<Int>
     ): Flow<PagingData<CharacterDomain>> {
-        Log.e("getPagedCharacters", "getPagedCharacters")
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
@@ -32,28 +34,22 @@ class CharacterListRepositoryImpl @Inject constructor(
                 initialLoadSize = PAGE_SIZE
             ),
             remoteMediator = CharacterListRemoteMediator(
-                characterListApi,
-                characterListDao,
-                name,
-                status,
-                species,
-                gender,
+                characterListApi, characterListDao,
+                dtoToCharacterEntityMapper,
+                name, status, species, gender,
             ),
             pagingSourceFactory = {
                 characterListDao.getPagingCharacter(
-                    name,
-                    status,
-                    species,
-                    gender,
+                    name, status, species, gender,
                 )
             }
         ).flow
-            .map { pagingData ->
-                pagingData.toCharacterDomainModel()
-            }
+            .map { entityToDomainPagingMapper(it) }
     }
 
-    override fun getPagedCharactersCache(characterListFilter: List<Int>) : Flow<PagingData<CharacterDomain>> {
+    override fun getPagedCharactersCache(
+        characterListFilter: List<Int>
+    ): Flow<PagingData<CharacterDomain>> {
         return Pager(
             config = PagingConfig(
                 pageSize = characterListFilter.size,
@@ -61,21 +57,15 @@ class CharacterListRepositoryImpl @Inject constructor(
                 initialLoadSize = characterListFilter.size
             ),
             remoteMediator = CharacterListCacheRemoteMediator(
-                characterListApi,
-                characterListDao,
+                characterListApi, characterListDao,
+                dtoToCharacterCacheEntityMapper,
                 characterListFilter
             ),
-            pagingSourceFactory = {
-                characterListDao.getPagingCharacterCache(
-                    characterListFilter,
-                )
-            }
-        ).flow
-            .map { pagingData ->
-                pagingData.toCharacterDomainModel()
-            }
-    }
+            pagingSourceFactory = { characterListDao.getPagingCharacterCache(characterListFilter) }
 
+        ).flow
+            .map { cacheEntityToDomainPagingMapper(it) }
+    }
 
     private companion object {
         const val PAGE_SIZE = 20

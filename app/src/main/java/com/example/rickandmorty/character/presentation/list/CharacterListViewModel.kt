@@ -10,9 +10,10 @@ import com.example.rickandmorty.character.domain.list.GetCharacterListByIdUseCas
 import com.example.rickandmorty.character.domain.list.GetCharacterListUseCase
 import com.example.rickandmorty.character.domain.list.model.CharacterFilter
 import com.example.rickandmorty.character.presentation.list.mapper.toCharacterItem
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class CharacterListViewModel @Inject constructor(
@@ -23,8 +24,8 @@ class CharacterListViewModel @Inject constructor(
 
     private val searchByFilter = MutableLiveData(CharacterFilter(""))
 
-    fun getFullListCharacter() = searchByFilter.asFlow()
-        // if user types text too quickly -> filtering intermediate values to avoid excess loads
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    suspend fun getFullListCharacter() = searchByFilter.asFlow()
         .debounce(500)
         .flatMapLatest {
             getCharacterListUseCase(it.name, it.status, it.species, it.gender)
@@ -32,22 +33,15 @@ class CharacterListViewModel @Inject constructor(
                     pagingData.map { item -> item.toCharacterItem() }
                 }
         }
-        // always use cacheIn operator for flows returned by Pager. Otherwise exception may be thrown
-        // when 1) refreshing/invalidating or 2) subscribing to the flow more than once.
         .cachedIn(viewModelScope)
 
-    fun getListCharacterById(idList: List<Int>) = searchByFilter.asFlow()
-        // if user types text too quickly -> filtering intermediate values to avoid excess loads
-        .debounce(500)
-        .flatMapLatest {
+
+    suspend fun getListCharacterById(idList: List<Int>) =
             getCharacterListByIdUseCase(idList)
                 .map { pagingData ->
                     pagingData.map { item -> item.toCharacterItem() }
-                }
-        }
-        // always use cacheIn operator for flows returned by Pager. Otherwise exception may be thrown
-        // when 1) refreshing/invalidating or 2) subscribing to the flow more than once.
-        .cachedIn(viewModelScope)
+                }.flowOn(Dispatchers.IO)
+                .cachedIn(viewModelScope)
 
 
     fun setSearchByFilter(item: CharacterFilter) {

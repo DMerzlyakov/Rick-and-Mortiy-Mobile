@@ -11,25 +11,27 @@ import com.example.rickandmorty.location.domain.list.GetLocationListUseCase
 import com.example.rickandmorty.location.domain.list.model.LocationFilter
 import com.example.rickandmorty.location.presentation.list.mapper.toLocationUiModel
 import com.example.rickandmorty.location.presentation.list.model.LocationUi
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class LocationListViewModel @Inject constructor(
     private val getLocationListUseCase: GetLocationListUseCase
 ) : ViewModel() {
 
 
-    var usersFlow: Flow<PagingData<LocationUi>>
+    val locationFlow: Flow<PagingData<LocationUi>>
 
     private val searchByFilter = MutableLiveData(LocationFilter(""))
 
 
     init {
-        usersFlow = searchByFilter.asFlow()
-            // if user types text too quickly -> filtering intermediate values to avoid excess loads
+        locationFlow = searchByFilter.asFlow()
             .debounce(500)
             .flatMapLatest {
                 getLocationListUseCase(it.name, it.type, it.dimension)
@@ -37,8 +39,6 @@ class LocationListViewModel @Inject constructor(
                         pagingData.map { item -> item.toLocationUiModel() }
                     }
             }
-            // always use cacheIn operator for flows returned by Pager. Otherwise exception may be thrown
-            // when 1) refreshing/invalidating or 2) subscribing to the flow more than once.
             .cachedIn(viewModelScope)
     }
 

@@ -1,6 +1,6 @@
 package com.example.rickandmorty.location.data.list.mapper
 
-import com.example.rickandmorty.location.data.detail.local.model.LocationEntity
+import com.example.rickandmorty.location.data.list.local.model.LocationEntity
 import com.example.rickandmorty.location.data.list.remote.model.LocationDTO
 
 

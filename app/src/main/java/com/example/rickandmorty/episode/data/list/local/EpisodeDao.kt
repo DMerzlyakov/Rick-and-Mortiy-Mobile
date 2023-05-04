@@ -6,6 +6,7 @@ import com.example.rickandmorty.character.data.list.local.model.CharacterEntity
 import com.example.rickandmorty.character.data.list.local.model.CharacterForDetailCacheEntity
 import com.example.rickandmorty.episode.data.list.local.model.EpisodeEntity
 import com.example.rickandmorty.episode.data.list.local.model.EpisodeForDetailCacheEntity
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 
@@ -39,6 +40,7 @@ interface EpisodeDao {
         episodeListFilter: List<Int>,
     ): PagingSource<Int, EpisodeForDetailCacheEntity>
 
-
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun saveEpisode(episode: EpisodeEntity): Completable
 
 }

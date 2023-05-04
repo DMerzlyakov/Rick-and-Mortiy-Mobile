@@ -10,17 +10,13 @@ import dagger.Component
 import retrofit2.Retrofit
 
 @Component(modules = [NetworkModule::class])
-interface ApplicationComponent : CharactersDep, LocationDep,
-    EpisodeDep {
+interface ApplicationComponent : CharactersDep, LocationDep, EpisodeDep {
 
     override val context: Context
-
     override val retrofit: Retrofit
 
     @Component.Factory
     interface Factory {
-        fun create(
-            @BindsInstance context: Context
-        ): ApplicationComponent
+        fun create(@BindsInstance context: Context): ApplicationComponent
     }
 }

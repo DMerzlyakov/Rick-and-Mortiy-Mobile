@@ -1,8 +1,8 @@
-package com.example.rickandmorty.extention_util
+package com.example.rickandmorty.utils
 
 /**
  * Вспомогательный интерфейс для обработки нажатий в RecyclerView
  */
-interface OnClickRecyclerViewInterface <T> {
+interface OnClickRecyclerViewInterface<T> {
     fun onItemClick(item: T, position: Int)
 }

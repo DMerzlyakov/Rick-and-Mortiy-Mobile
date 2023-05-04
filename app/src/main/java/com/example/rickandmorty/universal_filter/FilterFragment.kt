@@ -39,125 +39,141 @@ class FilterFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         arguments?.let {
-            filterType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getSerializable(KEY_TYPE, TYPE::class.java)
-            } else {
-                it.getSerializable(KEY_TYPE) as TYPE
-            }
+            filterType =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    it.getSerializable(KEY_TYPE, TYPE::class.java)
+                } else {
+                    it.getSerializable(KEY_TYPE) as TYPE
+                }
         }
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentFilterBinding.inflate(inflater, container, false)
+    ): View {
 
+        _binding = FragmentFilterBinding.inflate(inflater, container, false)
         setConfirmListener()
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         super.onViewCreated(view, savedInstanceState)
         funSetupTypeFilter()
 
     }
 
-    private fun funSetupTypeFilter() {
+    private fun funSetupTypeFilter() = when (filterType) {
+
+        TYPE.FROM_CHARACTER_LIST -> {
+            binding.thirdSearchEditText.visibility = View.GONE
+        }
+
+        TYPE.FROM_LOCATION_LIST -> {
+            binding.statusChooseChip.visibility = View.GONE
+            binding.statusText.visibility = View.GONE
+            binding.genderChooseChip.visibility = View.GONE
+            binding.genderText.visibility = View.GONE
+
+            binding.secondSearchEditText.hint = "Search by type"
+            binding.thirdSearchEditText.hint = "Search by dimension"
+        }
+
+        TYPE.FROM_EPISODE_LIST -> {
+            binding.statusChooseChip.visibility = View.GONE
+            binding.statusText.visibility = View.GONE
+            binding.genderChooseChip.visibility = View.GONE
+            binding.genderText.visibility = View.GONE
+            binding.secondSearchEditText.visibility = View.GONE
+        }
+
+        null -> throw RuntimeException("Choose type filter")
+
+    }
+
+
+    private fun setConfirmListener() = with(binding) {
+        confirmBtn.setOnClickListener(this@FilterFragment::confirmBtnClick)
+        cancelBtn.setOnClickListener(this@FilterFragment::cancelBtnClick)
+    }
+
+
+    private fun confirmBtnClick(view: View) {
+
         when (filterType) {
+
             TYPE.FROM_CHARACTER_LIST -> {
-                binding.thirdSearchEditText.visibility = View.GONE
+                onFilterResultListenerCharacter?.confirmFilter(
+                    getFilterResultCharacter()
+                )
             }
+
             TYPE.FROM_LOCATION_LIST -> {
-                binding.statusChooseChip.visibility = View.GONE
-                binding.statusText.visibility = View.GONE
-                binding.genderChooseChip.visibility = View.GONE
-                binding.genderText.visibility = View.GONE
-
-                binding.secondSearchEditText.hint = "Search by type"
-                binding.thirdSearchEditText.hint = "Search by dimension"
-
+                onFilterResultListenerLocation?.confirmFilter(
+                    getFilterResultLocation()
+                )
             }
+
             TYPE.FROM_EPISODE_LIST -> {
-                binding.statusChooseChip.visibility = View.GONE
-                binding.statusText.visibility = View.GONE
-                binding.genderChooseChip.visibility = View.GONE
-                binding.genderText.visibility = View.GONE
-                binding.secondSearchEditText.visibility = View.GONE
+                onFilterResultListenerEpisode?.confirmFilter(
+                    getFilterResultEpisode()
+                )
             }
+
             null -> throw RuntimeException("Choose type filter")
         }
 
+        dismiss()
+
     }
 
-    private fun setConfirmListener() {
-        with(binding) {
-            confirmBtn.setOnClickListener {
-                when (filterType){
-                    TYPE.FROM_CHARACTER_LIST -> {
-                        onFilterResultListenerCharacter?.confirmFilter(
-                            getFilterResultCharacter()
-                        )
-                    }
-                    TYPE.FROM_LOCATION_LIST -> {
-                        onFilterResultListenerLocation?.confirmFilter(
-                            getFilterResultLocation()
-                        )
-                    }
-                    TYPE.FROM_EPISODE_LIST -> {
-                        onFilterResultListenerEpisode?.confirmFilter(
-                            getFilterResultEpisode()
-                        )
-                    }
-                    null -> TODO()
-                }
-                dismiss()
+    private fun cancelBtnClick(view: View) {
+
+        when (filterType) {
+
+            TYPE.FROM_CHARACTER_LIST -> {
+                onFilterResultListenerCharacter?.confirmFilter(
+                    CharacterFilter("")
+                )
             }
 
-            cancelBtn.setOnClickListener {
-                when (filterType){
-                    TYPE.FROM_CHARACTER_LIST -> {
-                        onFilterResultListenerCharacter?.confirmFilter(
-                            CharacterFilter("")
-                        )
-                    }
-                    TYPE.FROM_LOCATION_LIST -> {
-                        onFilterResultListenerLocation?.confirmFilter(
-                            LocationFilter("")
-                        )
-                    }
-                    TYPE.FROM_EPISODE_LIST -> {
-
-                        onFilterResultListenerEpisode?.confirmFilter(
-                            EpisodeFilter("")
-                        )
-                    }
-                    null -> TODO()
-                }
-                dismiss()
+            TYPE.FROM_LOCATION_LIST -> {
+                onFilterResultListenerLocation?.confirmFilter(
+                    LocationFilter("")
+                )
             }
+
+            TYPE.FROM_EPISODE_LIST -> {
+                onFilterResultListenerEpisode?.confirmFilter(
+                    EpisodeFilter("")
+                )
+            }
+
+            null -> throw RuntimeException("Choose type filter")
         }
-    }
 
-    private fun getFilterResultLocation(): LocationFilter {
-
-        return LocationFilter(
-            binding.firstSearchEditText.editText?.text.toString(),
-            binding.secondSearchEditText.editText?.text.toString(),
-            binding.thirdSearchEditText.editText?.text.toString(),
-        )
+        dismiss()
 
     }
 
-    private fun getFilterResultEpisode(): EpisodeFilter {
+    private fun getFilterResultLocation() = LocationFilter(
+        binding.firstSearchEditText.editText?.text.toString(),
+        binding.secondSearchEditText.editText?.text.toString(),
+        binding.thirdSearchEditText.editText?.text.toString(),
+    )
 
-        return EpisodeFilter(
-            binding.firstSearchEditText.editText?.text.toString(),
-            binding.thirdSearchEditText.editText?.text.toString(),
-        )
 
-    }
+    private fun getFilterResultEpisode() = EpisodeFilter(
+        binding.firstSearchEditText.editText?.text.toString(),
+        binding.thirdSearchEditText.editText?.text.toString(),
+    )
+
 
     private fun getFilterResultCharacter(): CharacterFilter {
 
@@ -175,27 +191,21 @@ class FilterFragment : DialogFragment() {
             selectedGender = selectedChipGender.text.toString()
         }
 
-
         return CharacterFilter(
             binding.firstSearchEditText.editText?.text.toString(),
             binding.secondSearchEditText.editText?.text.toString(),
             selectedStatus,
             selectedGender
         )
-
     }
-
 
 
     companion object {
 
         @JvmStatic
-        fun newInstance(FILTER_PARAM: TYPE) =
-            FilterFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable(KEY_TYPE, FILTER_PARAM)
-                }
-            }
+        fun newInstance(FILTER_PARAM: TYPE) = FilterFragment().apply {
+            arguments = Bundle().apply { putSerializable(KEY_TYPE, FILTER_PARAM) }
+        }
 
         private const val KEY_TYPE = "type"
 

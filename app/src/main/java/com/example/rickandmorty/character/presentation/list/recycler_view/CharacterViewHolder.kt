@@ -3,8 +3,8 @@ package com.example.rickandmorty.character.presentation.list.recycler_view
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmorty.character.presentation.list.model.CharacterUi
 import com.example.rickandmorty.databinding.ItemCharacterBinding
-import com.example.rickandmorty.extention_util.OnClickRecyclerViewInterface
-import com.example.rickandmorty.extention_util.setImageFromUrl
+import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
+import com.example.rickandmorty.utils.setImageFromUrl
 
 class CharacterViewHolder(
     private val binding: ItemCharacterBinding,
