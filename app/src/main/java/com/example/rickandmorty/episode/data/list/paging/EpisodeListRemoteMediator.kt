@@ -6,7 +6,9 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.example.rickandmorty.episode.data.list.local.EpisodeDao
 import com.example.rickandmorty.episode.data.list.local.model.EpisodeEntity
+import com.example.rickandmorty.episode.data.list.local.model.EpisodeForDetailCacheEntity
 import com.example.rickandmorty.episode.data.list.mapper.EpisodeDtoToEpisodeEntityMapper
+import com.example.rickandmorty.episode.data.list.mapper.EpisodeResultDtoToEpisodeCacheEntityMapper
 import com.example.rickandmorty.episode.data.list.remote.EpisodeListApi
 
 @OptIn(ExperimentalPagingApi::class)
@@ -14,6 +16,7 @@ class EpisodeListRemoteMediator(
     private val episodeApi: EpisodeListApi,
     private val episodeDao: EpisodeDao,
     private val dtoToEntityMapper: EpisodeDtoToEpisodeEntityMapper,
+    private val dtoToCacheEntityMapper: EpisodeResultDtoToEpisodeCacheEntityMapper,
     private val name: String,
     private val episode: String,
 ) : RemoteMediator<Int, EpisodeEntity>() {
@@ -30,17 +33,18 @@ class EpisodeListRemoteMediator(
         return try {
 
             val episodes = getEpisodesByRemote(name, episode)
-            episodeDao.save(episodes)
-            MediatorResult.Success(episodes.size < state.config.pageSize)
+            episodeDao.save(episodes.first)
+            episodeDao.saveCache(episodes.second)
+            MediatorResult.Success(episodes.first.size < state.config.pageSize)
 
         } catch (e: Exception) {
             MediatorResult.Error(e)
         }
     }
 
-    private suspend fun getEpisodesByRemote(name: String, episode: String): List<EpisodeEntity> {
+    private suspend fun getEpisodesByRemote(name: String, episode: String): Pair<List<EpisodeEntity>, List<EpisodeForDetailCacheEntity>> {
         val episodes = episodeApi.getAllEpisode(pageIndex, name, episode).body()
-        return dtoToEntityMapper(episodes!!)
+        return Pair(dtoToEntityMapper(episodes!!), dtoToCacheEntityMapper(episodes.results))
     }
 
     private fun getPagedIndex(loadType: LoadType): Int? {
@@ -50,6 +54,5 @@ class EpisodeListRemoteMediator(
             LoadType.APPEND -> ++pageIndex
         }
         return pageIndex
-
     }
 }

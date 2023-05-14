@@ -3,7 +3,8 @@ package com.example.rickandmorty.location.data.list
 
 import androidx.paging.*
 import com.example.rickandmorty.location.data.list.local.LocationDao
-import com.example.rickandmorty.location.data.list.mapper.toLocationDomain
+import com.example.rickandmorty.location.data.list.mapper.LocationDtoToLocationEntityMapper
+import com.example.rickandmorty.location.data.list.mapper.LocationEntityToLocationDomainMapper
 import com.example.rickandmorty.location.data.list.paging.LocationRemoteMediator
 import com.example.rickandmorty.location.data.list.remote.LocationListApi
 import com.example.rickandmorty.location.domain.list.LocationsListRepository
@@ -15,7 +16,9 @@ import javax.inject.Inject
 @OptIn(ExperimentalPagingApi::class)
 class LocationsListRepositoryImpl @Inject constructor(
     private val locationListApi: LocationListApi,
-    private val locationListDao: LocationDao
+    private val locationListDao: LocationDao,
+    private val mapperToEntity: LocationDtoToLocationEntityMapper,
+    private val mapperToDomain: LocationEntityToLocationDomainMapper
 ) : LocationsListRepository {
 
     override suspend fun getPagedLocations(
@@ -32,13 +35,14 @@ class LocationsListRepositoryImpl @Inject constructor(
             remoteMediator = LocationRemoteMediator(
                 locationListApi,
                 locationListDao,
+                mapperToEntity,
                 name,
                 type,
                 dimension
             ),
             pagingSourceFactory = { locationListDao.getPagingLocation(name, type, dimension) }
         ).flow
-            .map { it.toLocationDomain() }
+            .map { it.map { item -> mapperToDomain(item)}}
     }
 
     private companion object {

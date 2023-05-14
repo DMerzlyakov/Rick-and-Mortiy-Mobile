@@ -16,8 +16,8 @@ import javax.inject.Inject
 class CharacterListRepositoryImpl @Inject constructor(
     private val characterListApi: CharacterListApi,
     private val characterListDao: CharacterListDao,
-    private val entityToDomainPagingMapper: CharacterEntityToCharacterDomainPagingMapper,
-    private val cacheEntityToDomainPagingMapper: CharacterCacheEntityToCharacterDomainPagingMapper,
+    private val entityToDomainMapper: CharacterEntityToCharacterDomainMapper,
+    private val cacheEntityToDomainMapper: CharacterCacheEntityToCharacterDomainMapper,
     private val dtoToCharacterEntityMapper: CharacterPageDtoToCharacterEntityMapper,
     private val dtoToCharacterCacheEntityMapper: CharacterResultDtoToCharacterCacheEntityMapper
 ) : CharacterListRepository {
@@ -36,6 +36,7 @@ class CharacterListRepositoryImpl @Inject constructor(
             remoteMediator = CharacterListRemoteMediator(
                 characterListApi, characterListDao,
                 dtoToCharacterEntityMapper,
+                dtoToCharacterCacheEntityMapper,
                 name, status, species, gender,
             ),
             pagingSourceFactory = {
@@ -44,7 +45,7 @@ class CharacterListRepositoryImpl @Inject constructor(
                 )
             }
         ).flow
-            .map { entityToDomainPagingMapper(it) }
+            .map { it.map { item -> entityToDomainMapper(item) } }
     }
 
     override fun getPagedCharactersCache(
@@ -64,7 +65,7 @@ class CharacterListRepositoryImpl @Inject constructor(
             pagingSourceFactory = { characterListDao.getPagingCharacterCache(characterListFilter) }
 
         ).flow
-            .map { cacheEntityToDomainPagingMapper(it) }
+            .map { it.map { item -> cacheEntityToDomainMapper(item) } }
     }
 
     private companion object {

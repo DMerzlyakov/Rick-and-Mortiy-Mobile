@@ -9,7 +9,7 @@ import androidx.paging.map
 import com.example.rickandmorty.episode.domain.list.GetEpisodeListByIdUseCase
 import com.example.rickandmorty.episode.domain.list.GetEpisodeListUseCase
 import com.example.rickandmorty.episode.domain.list.model.EpisodeFilter
-import com.example.rickandmorty.episode.presentation.list.mapper.toEpisodeUiModel
+import com.example.rickandmorty.episode.presentation.list.mapper.EpisodeDomainToEpisodeUiMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -21,7 +21,8 @@ import javax.inject.Inject
 
 class EpisodeListViewModel @Inject constructor(
     private val getEpisodeListUseCase: GetEpisodeListUseCase,
-    private val getEpisodeListByIdUseCase: GetEpisodeListByIdUseCase
+    private val getEpisodeListByIdUseCase: GetEpisodeListByIdUseCase,
+    private val mapperToUiModel: EpisodeDomainToEpisodeUiMapper
 ) : ViewModel() {
 
     private val searchByFilter = MutableLiveData(EpisodeFilter(""))
@@ -32,7 +33,7 @@ class EpisodeListViewModel @Inject constructor(
         .flatMapLatest {
             getEpisodeListUseCase(it.name, it.episode)
                 .map { pagingData ->
-                    pagingData.map { item -> item.toEpisodeUiModel() }
+                    pagingData.map { item -> mapperToUiModel(item) }
                 }
         }
         .cachedIn(viewModelScope)
@@ -40,7 +41,7 @@ class EpisodeListViewModel @Inject constructor(
     suspend fun getListEpisodeById(idList: List<Int>) =
         getEpisodeListByIdUseCase(idList)
             .map { pagingData ->
-                pagingData.map { item -> item.toEpisodeUiModel() }
+                pagingData.map { item -> mapperToUiModel(item) }
             }.flowOn(Dispatchers.IO)
             .cachedIn(viewModelScope)
 

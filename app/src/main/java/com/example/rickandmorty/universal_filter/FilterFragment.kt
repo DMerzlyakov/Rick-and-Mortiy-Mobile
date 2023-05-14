@@ -36,10 +36,8 @@ class FilterFragment : DialogFragment() {
         onFilterResultListenerEpisode = listener
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         arguments?.let {
             filterType =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -55,26 +53,20 @@ class FilterFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentFilterBinding.inflate(inflater, container, false)
         setConfirmListener()
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         super.onViewCreated(view, savedInstanceState)
         funSetupTypeFilter()
-
     }
 
     private fun funSetupTypeFilter() = when (filterType) {
-
         TYPE.FROM_CHARACTER_LIST -> {
             binding.thirdSearchEditText.visibility = View.GONE
         }
-
         TYPE.FROM_LOCATION_LIST -> {
             binding.statusChooseChip.visibility = View.GONE
             binding.statusText.visibility = View.GONE
@@ -84,7 +76,6 @@ class FilterFragment : DialogFragment() {
             binding.secondSearchEditText.hint = "Search by type"
             binding.thirdSearchEditText.hint = "Search by dimension"
         }
-
         TYPE.FROM_EPISODE_LIST -> {
             binding.statusChooseChip.visibility = View.GONE
             binding.statusText.visibility = View.GONE
@@ -92,72 +83,57 @@ class FilterFragment : DialogFragment() {
             binding.genderText.visibility = View.GONE
             binding.secondSearchEditText.visibility = View.GONE
         }
-
         null -> throw RuntimeException("Choose type filter")
 
     }
-
 
     private fun setConfirmListener() = with(binding) {
         confirmBtn.setOnClickListener(this@FilterFragment::confirmBtnClick)
         cancelBtn.setOnClickListener(this@FilterFragment::cancelBtnClick)
     }
 
-
     private fun confirmBtnClick(view: View) {
-
         when (filterType) {
-
             TYPE.FROM_CHARACTER_LIST -> {
                 onFilterResultListenerCharacter?.confirmFilter(
                     getFilterResultCharacter()
                 )
             }
-
             TYPE.FROM_LOCATION_LIST -> {
                 onFilterResultListenerLocation?.confirmFilter(
                     getFilterResultLocation()
                 )
             }
-
             TYPE.FROM_EPISODE_LIST -> {
                 onFilterResultListenerEpisode?.confirmFilter(
                     getFilterResultEpisode()
                 )
             }
-
             null -> throw RuntimeException("Choose type filter")
         }
-
         dismiss()
 
     }
 
     private fun cancelBtnClick(view: View) {
-
         when (filterType) {
-
             TYPE.FROM_CHARACTER_LIST -> {
                 onFilterResultListenerCharacter?.confirmFilter(
                     CharacterFilter("")
                 )
             }
-
             TYPE.FROM_LOCATION_LIST -> {
                 onFilterResultListenerLocation?.confirmFilter(
                     LocationFilter("")
                 )
             }
-
             TYPE.FROM_EPISODE_LIST -> {
                 onFilterResultListenerEpisode?.confirmFilter(
                     EpisodeFilter("")
                 )
             }
-
             null -> throw RuntimeException("Choose type filter")
         }
-
         dismiss()
 
     }

@@ -17,10 +17,10 @@ import com.example.rickandmorty.character.di.DaggerCharacterComponent;
 import com.example.rickandmorty.character.presentation.detail.model.CharacterDetailUi;
 import com.example.rickandmorty.databinding.FragmentCharacterDetailsBinding;
 import com.example.rickandmorty.episode.presentation.list.EpisodeListFragment;
-import com.example.rickandmorty.location.presentation.detail.LocationDetailFragment;
 import com.example.rickandmorty.main.presentation.OnNavigationListener;
 import com.example.rickandmorty.main.presentation.RickAndMortyApp;
 import com.example.rickandmorty.utils.ExtensionsKt;
+import com.google.android.material.snackbar.Snackbar;
 
 import javax.inject.Inject;
 
@@ -40,10 +40,8 @@ public class CharacterDetailsFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-
         CharacterComponent component = DaggerCharacterComponent.factory().create(((RickAndMortyApp) requireActivity().getApplication()).getComponent());
         component.inject(this);
-
         if (context instanceof OnNavigationListener) {
             onNavigationListener = (OnNavigationListener) context;
         } else {
@@ -54,43 +52,37 @@ public class CharacterDetailsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         viewModel = new ViewModelProvider(this, viewModelFactory)
                 .get(CharacterDetailViewModel.class);
-
-
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         binding = FragmentCharacterDetailsBinding.inflate(inflater, container, false);
-
         setupButtonListeners();
-
         observeData(requireArguments().getInt(CharacterDetailsFragment.ARG_PARAM_CHARACTER_ID));
-
         return binding.getRoot();
     }
 
     private void setupButtonListeners() {
         binding.btnBack.setOnClickListener(view -> onNavigationListener.toBackStack());
-
         binding.originLocationView.setOnClickListener(view -> {
             if (mCharacter.getOrigin().getId() != null) {
-                onNavigationListener.navigateToFragment(LocationDetailFragment.newInstance(mCharacter.getOrigin().getId()));
+                onNavigationListener.navigateToLocationDetailFragment(mCharacter.getOrigin().getId());
             }
         });
-
         binding.lastLocationView.setOnClickListener(view -> {
             if (mCharacter.getLocation().getId() != null) {
-                onNavigationListener.navigateToFragment(LocationDetailFragment.newInstance(mCharacter.getLocation().getId()));
+                onNavigationListener.navigateToLocationDetailFragment(mCharacter.getLocation().getId());
             }
         });
-
-        binding.refreshLayout.setOnRefreshListener(() -> viewModel.getCharacter(mCharacter.getId()));
-
+        binding.refreshLayout.setOnRefreshListener(() -> {
+                    if (mCharacter != null) {
+                        viewModel.getCharacter(mCharacter.getId());
+                    }
+                }
+        );
     }
 
 
@@ -101,9 +93,13 @@ public class CharacterDetailsFragment extends Fragment {
             updateViewDetail();
             setupEpisodeList();
         });
+
+        viewModel.getErrorLiveData().observe(getViewLifecycleOwner(), value -> {
+            Snackbar.make(binding.getRoot(), value, Snackbar.LENGTH_SHORT).show();
+        });
     }
 
-    private void setupEpisodeList(){
+    private void setupEpisodeList() {
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.list_container, EpisodeListFragment.newInstance(EpisodeListFragment.getTypeListOnly(), mCharacter.getEpisodeIdList()))
                 .commit();
@@ -125,7 +121,6 @@ public class CharacterDetailsFragment extends Fragment {
             binding.originLocationView.setText(mCharacter.getOrigin().getName());
         }
     }
-
 
     public static final String ARG_PARAM_CHARACTER_ID = "id";
 

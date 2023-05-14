@@ -18,6 +18,7 @@ import com.example.rickandmorty.location.di.LocationComponent;
 import com.example.rickandmorty.location.presentation.detail.model.LocationDetailUi;
 import com.example.rickandmorty.main.presentation.OnNavigationListener;
 import com.example.rickandmorty.main.presentation.RickAndMortyApp;
+import com.google.android.material.snackbar.Snackbar;
 
 import javax.inject.Inject;
 
@@ -29,19 +30,17 @@ public class LocationDetailFragment extends Fragment {
     private LocationDetailViewModel viewModel;
     private LocationDetailUi mLocation;
 
-
     @Inject
     LocationDetailViewModelFactory viewModelFactory;
-
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        LocationComponent component = DaggerLocationComponent
+                .factory()
+                .create(((RickAndMortyApp) requireActivity().getApplication()).getComponent());
 
-
-        LocationComponent component = DaggerLocationComponent.factory().create(((RickAndMortyApp) requireActivity().getApplication()).getComponent());
         component.inject(this);
-
         if (context instanceof OnNavigationListener) {
             onNavigationListener = (OnNavigationListener) context;
         } else {
@@ -52,7 +51,6 @@ public class LocationDetailFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         viewModel = new ViewModelProvider(this, viewModelFactory)
                 .get(LocationDetailViewModel.class);
 
@@ -61,22 +59,20 @@ public class LocationDetailFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         binding = FragmentLocationDetailBinding.inflate(inflater, container, false);
-
         setupButtonListeners();
-
         observeData(requireArguments().getInt(LocationDetailFragment.ARG_PARAM_CHARACTER_ID));
-
-
         return binding.getRoot();
     }
 
     private void setupButtonListeners() {
         binding.btnBack.setOnClickListener(view -> onNavigationListener.toBackStack());
-
-        binding.refreshLayout.setOnRefreshListener(() -> viewModel.getLocation(mLocation.getId()));
-
+        binding.refreshLayout.setOnRefreshListener(() -> {
+                    if (mLocation != null) {
+                        viewModel.getLocation(mLocation.getId());
+                    }
+                }
+        );
     }
 
 
@@ -86,11 +82,14 @@ public class LocationDetailFragment extends Fragment {
             mLocation = characterDetail;
             updateViewDetail();
             setupCharacterList();
+        });
 
+        viewModel.getErrorLiveData().observe(getViewLifecycleOwner(), value -> {
+            Snackbar.make(binding.getRoot(), value, Snackbar.LENGTH_SHORT).show();
         });
     }
 
-    private void setupCharacterList(){
+    private void setupCharacterList() {
         getChildFragmentManager().beginTransaction()
                 .addToBackStack(null)
                 .replace(binding.characterList.getId(), CharacterListFragment.newInstance(CharacterListFragment.getTypeListOnly(), mLocation.getResidents()))

@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import com.example.rickandmorty.character.data.list.local.model.CharacterEntity
 import com.example.rickandmorty.character.data.list.local.model.CharacterForDetailCacheEntity
 
+
 @Database(
     entities = [(CharacterEntity::class), (CharacterForDetailCacheEntity::class)],
     version = 7

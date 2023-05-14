@@ -10,7 +10,7 @@ import com.example.rickandmorty.character.presentation.list.CharacterListFragmen
 import dagger.Component
 import javax.inject.Singleton
 
-@Singleton
+
 @Component(
     modules = [
         CharacterListRepositoryModule::class,
@@ -20,12 +20,16 @@ import javax.inject.Singleton
     ],
     dependencies = [CharactersDep::class]
 )
+@Singleton
 interface CharacterComponent {
 
+    @Singleton
     fun inject(fragment: CharacterListFragment)
 
+    @Singleton
     fun inject(fragment: CharacterDetailsFragment)
 
+    @Singleton
     @Component.Factory
     interface Factory {
         fun create(

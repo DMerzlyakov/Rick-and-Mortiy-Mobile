@@ -1,9 +1,6 @@
 package com.example.rickandmorty.episode.data.list
 
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
+import androidx.paging.*
 import com.example.rickandmorty.episode.data.list.local.EpisodeDao
 import com.example.rickandmorty.episode.data.list.mapper.*
 import com.example.rickandmorty.episode.data.list.paging.EpisodeListCacheRemoteMediator
@@ -19,8 +16,8 @@ import javax.inject.Inject
 class EpisodeListRepositoryImpl @Inject constructor(
     private val episodeListApi: EpisodeListApi,
     private val episodeDao: EpisodeDao,
-    private val entityCacheToDomainPagingMapper: EpisodeCacheEntityToEpisodeDomainPaginMapper,
-    private val entityToDomainPagingMapper: EpisodeEntityToEpisodeDomainPagingMapper,
+    private val entityCacheToDomainMapper: EpisodeCacheEntityToEpisodeDomainMapper,
+    private val entityToDomainMapper: EpisodeEntityToEpisodeDomainMapper,
     private val dtoToEntityMapper: EpisodeDtoToEpisodeEntityMapper,
     private val dtoToCacheEntityMapper: EpisodeResultDtoToEpisodeCacheEntityMapper
 
@@ -39,12 +36,13 @@ class EpisodeListRepositoryImpl @Inject constructor(
                 episodeListApi,
                 episodeDao,
                 dtoToEntityMapper,
+                dtoToCacheEntityMapper,
                 name,
                 episode,
             ),
             pagingSourceFactory = { episodeDao.getPagingEpisode(name, episode) }
         ).flow
-            .map { entityToDomainPagingMapper(it) }
+            .map { it.map { item -> entityToDomainMapper(item)} }
     }
 
     override suspend fun getPagedEpisodesById(episodeIdList: List<Int>): Flow<PagingData<EpisodeDomain>> {
@@ -62,7 +60,7 @@ class EpisodeListRepositoryImpl @Inject constructor(
             ),
             pagingSourceFactory = { episodeDao.getPagingEpisodeCache(episodeIdList) }
         ).flow
-            .map { entityCacheToDomainPagingMapper(it) }
+            .map { it.map { item -> entityCacheToDomainMapper(item)} }
     }
 
     private companion object {

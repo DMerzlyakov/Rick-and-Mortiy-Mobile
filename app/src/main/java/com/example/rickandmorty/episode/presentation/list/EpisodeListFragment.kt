@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rickandmorty.databinding.FragmentEpisodeListBinding
 import com.example.rickandmorty.episode.di.DaggerEpisodeComponent
 import com.example.rickandmorty.episode.domain.list.model.EpisodeFilter
-import com.example.rickandmorty.episode.presentation.detail.EpisodeDetailsFragment
 import com.example.rickandmorty.episode.presentation.list.model.EpisodeUi
 import com.example.rickandmorty.episode.presentation.list.recyclerView.EpisodesRecyclerViewAdapter
 import com.example.rickandmorty.main.presentation.OnNavigationListener
@@ -25,6 +24,7 @@ import com.example.rickandmorty.main.presentation.RickAndMortyApp
 import com.example.rickandmorty.universal_filter.FilterFragment
 import com.example.rickandmorty.universal_filter.OnFilterResultListenerEpisode
 import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -53,17 +53,17 @@ class EpisodeListFragment : Fragment() {
     private val onClickRecyclerViewInterface = object :
         OnClickRecyclerViewInterface<EpisodeUi> {
         override fun onItemClick(item: EpisodeUi, position: Int) {
-            val fragment = EpisodeDetailsFragment.newInstance(item.id)
-            onNavigationListener.navigateToFragment(fragment)
-            onNavigationListener.updateBottomNavigationVisibility(View.GONE)
+            onNavigationListener.navigateToEpisodeDetailFragment(item.id)
         }
     }
 
     private val adapter = EpisodesRecyclerViewAdapter(onClickRecyclerViewInterface)
 
     private var fragmentType = TYPE.TYPE_FULL_SCREEN
+    private var snackBarVisible = false
 
     override fun onAttach(context: Context) {
+        component.inject(this)
         super.onAttach(context)
         if (context is OnNavigationListener) {
             onNavigationListener = context
@@ -71,12 +71,10 @@ class EpisodeListFragment : Fragment() {
             throw RuntimeException("Activity must be implements OnNavigationListener")
         }
 
-        component.inject(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         if (arguments != null) {
             fragmentType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 requireArguments().getSerializable(KEY_TYPE, TYPE::class.java) as TYPE
@@ -90,18 +88,15 @@ class EpisodeListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentEpisodeListBinding.inflate(inflater, container, false)
         setupFragmentType()
-
         return binding.root
     }
 
     private fun setupFragmentType() {
         when (fragmentType) {
-
             TYPE.TYPE_FULL_SCREEN -> {
-                onNavigationListener.updateBottomNavigationVisibility(View.VISIBLE)
+                onNavigationListener.setupBottomNavigationVisible()
                 binding.constraintLayout.visibility = View.VISIBLE
 
                 observeFullEpisodeList()
@@ -138,11 +133,9 @@ class EpisodeListFragment : Fragment() {
         }
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialRecycleView()
-
         initListeners()
     }
 
@@ -151,12 +144,10 @@ class EpisodeListFragment : Fragment() {
             searchView.editText?.addTextChangedListener {
                 viewModel.setSearchByFilter(EpisodeFilter(it.toString()))
             }
-
             filterBtn.setOnClickListener {
                 val dialog = FilterFragment.newInstance(
                     FilterFragment.Companion.TYPE.FROM_EPISODE_LIST,
                 )
-
                 dialog.setOnFilterResultListenerEpisode(object : OnFilterResultListenerEpisode {
                     override fun confirmFilter(item: EpisodeFilter?) {
                         item?.let {
@@ -168,13 +159,10 @@ class EpisodeListFragment : Fragment() {
                 })
                 dialog.show(childFragmentManager, "Filter")
             }
-
             refreshLayout.setOnRefreshListener {
                 binding.circularProgressBar.visibility = View.INVISIBLE
                 adapter.refresh()
             }
-
-
         }
     }
 
@@ -200,8 +188,23 @@ class EpisodeListFragment : Fragment() {
     }
 
     private fun makeToast(message: String) {
-        Snackbar.make(binding.constraintLayout, message, Snackbar.LENGTH_SHORT).show()
+        if (!snackBarVisible) {
+            snackBarVisible = true
+            Snackbar
+                .make(binding.root, message, Snackbar.LENGTH_SHORT)
+                .setAnchorView(binding.forToast)
+                .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                        if (event == DISMISS_EVENT_TIMEOUT) {
+                            snackBarVisible = false
+                        }
+                        super.onDismissed(transientBottomBar, event)
+                    }
+                })
+                .show()
+        }
     }
+
 
 
     /** Установка адаптера для RecyclerView*/
@@ -212,7 +215,6 @@ class EpisodeListFragment : Fragment() {
             episodeList.layoutManager = LinearLayoutManager(requireContext())
         }
         episodeList.adapter = adapter
-
         initialStateListener()
     }
 
@@ -220,7 +222,7 @@ class EpisodeListFragment : Fragment() {
     companion object {
         @JvmStatic
         fun newInstance(
-            TYPE_PARAM: TYPE,
+            TYPE_PARAM: TYPE = TYPE.TYPE_FULL_SCREEN,
             EPISODE_LIST: List<Int> = emptyList()
         ): EpisodeListFragment {
             val fragment = EpisodeListFragment()

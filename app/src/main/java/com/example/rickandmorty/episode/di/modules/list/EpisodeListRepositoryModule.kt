@@ -5,9 +5,9 @@ import androidx.room.Room
 import com.example.rickandmorty.episode.data.list.EpisodeListRepositoryImpl
 import com.example.rickandmorty.episode.data.list.local.EpisodeDao
 import com.example.rickandmorty.episode.data.list.local.EpisodesDatabase
-import com.example.rickandmorty.episode.data.list.mapper.EpisodeCacheEntityToEpisodeDomainPaginMapper
+import com.example.rickandmorty.episode.data.list.mapper.EpisodeCacheEntityToEpisodeDomainMapper
 import com.example.rickandmorty.episode.data.list.mapper.EpisodeDtoToEpisodeEntityMapper
-import com.example.rickandmorty.episode.data.list.mapper.EpisodeEntityToEpisodeDomainPagingMapper
+import com.example.rickandmorty.episode.data.list.mapper.EpisodeEntityToEpisodeDomainMapper
 import com.example.rickandmorty.episode.data.list.mapper.EpisodeResultDtoToEpisodeCacheEntityMapper
 import com.example.rickandmorty.episode.data.list.remote.EpisodeListApi
 import com.example.rickandmorty.episode.domain.list.EpisodeListRepository
@@ -54,8 +54,8 @@ class EpisodeListRepositoryModule {
     @Provides
     fun provideEpisodeListRepositoryImpl(
         episodeListApi: EpisodeListApi, episodeDao: EpisodeDao,
-        entityCacheToDomainPagingMapper: EpisodeCacheEntityToEpisodeDomainPaginMapper,
-        entityToDomainPagingMapper: EpisodeEntityToEpisodeDomainPagingMapper,
+        entityCacheToDomainPagingMapper: EpisodeCacheEntityToEpisodeDomainMapper,
+        entityToDomainPagingMapper: EpisodeEntityToEpisodeDomainMapper,
         dtoToEntityMapper: EpisodeDtoToEpisodeEntityMapper,
         dtoToCacheEntityMapper: EpisodeResultDtoToEpisodeCacheEntityMapper
     ): EpisodeListRepositoryImpl {

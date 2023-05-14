@@ -1,6 +1,6 @@
 package com.example.rickandmorty.character.data.list.remote
 
-import com.example.rickandmorty.character.data.list.remote.model.CharacterPagedDTO
+import com.example.rickandmorty.character.data.list.remote.model.CharacterPageDTO
 import com.example.rickandmorty.character.data.list.remote.model.CharacterResultsDTO
 import retrofit2.Response
 import retrofit2.http.GET
@@ -16,7 +16,7 @@ interface CharacterListApi {
         @Query("status") status: String,
         @Query("species") species: String,
         @Query("gender") gender: String,
-    ): Response<CharacterPagedDTO>
+    ): Response<CharacterPageDTO>
 
 
     @GET("/api/character/{idList}")

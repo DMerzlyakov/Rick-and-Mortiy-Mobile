@@ -14,20 +14,17 @@ import javax.inject.Singleton
 @Module
 class LocationDetailRepositoryModule {
 
-
     @Singleton
     @Provides
     fun provideLocationDetailRepository(locationDetailRepositoryImpl: LocationDetailRepositoryImpl): LocationDetailRepository {
         return locationDetailRepositoryImpl
     }
 
-
     @Singleton
     @Provides
     fun provideLocationListApi(retrofit: Retrofit): LocationDetailApi {
         return retrofit.create(LocationDetailApi::class.java)
     }
-
 
     @Singleton
     @Provides

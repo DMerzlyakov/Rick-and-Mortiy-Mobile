@@ -4,6 +4,5 @@ import com.example.rickandmorty.character.domain.detail.model.CharacterDetailDom
 import io.reactivex.Single
 
 interface CharacterDetailRepository {
-
     fun getCharacterDetail(mId: Int): Single<CharacterDetailDomain>
 }

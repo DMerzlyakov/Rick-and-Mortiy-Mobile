@@ -6,7 +6,9 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.example.rickandmorty.character.data.list.local.CharacterListDao
 import com.example.rickandmorty.character.data.list.local.model.CharacterEntity
+import com.example.rickandmorty.character.data.list.local.model.CharacterForDetailCacheEntity
 import com.example.rickandmorty.character.data.list.mapper.CharacterPageDtoToCharacterEntityMapper
+import com.example.rickandmorty.character.data.list.mapper.CharacterResultDtoToCharacterCacheEntityMapper
 import com.example.rickandmorty.character.data.list.remote.CharacterListApi
 
 @OptIn(ExperimentalPagingApi::class)
@@ -14,6 +16,7 @@ class CharacterListRemoteMediator(
     private val characterApi: CharacterListApi,
     private val characterListDao: CharacterListDao,
     private val dtoToCharacterEntityMapper: CharacterPageDtoToCharacterEntityMapper,
+    private val dtoToCharacterCacheEntityMapper: CharacterResultDtoToCharacterCacheEntityMapper,
     private val name: String,
     private val status: String,
     private val species: String,
@@ -33,8 +36,9 @@ class CharacterListRemoteMediator(
         return try {
 
             val characters = getCharactersByRemote(name, status, species, gender)
-            characterListDao.save(characters)
-            MediatorResult.Success(characters.size < state.config.pageSize)
+            characterListDao.save(characters.first)
+            characterListDao.saveCache(characters.second)
+            MediatorResult.Success(characters.first.size < state.config.pageSize)
 
         } catch (e: Exception) {
             MediatorResult.Error(e)
@@ -46,10 +50,10 @@ class CharacterListRemoteMediator(
         status: String,
         species: String,
         gender: String
-    ): List<CharacterEntity> {
+    ): Pair<List<CharacterEntity>, List<CharacterForDetailCacheEntity>> {
         val characters =
             characterApi.getAllCharacters(pageIndex, name, status, species, gender).body()
-        return dtoToCharacterEntityMapper(characters!!)
+        return Pair(dtoToCharacterEntityMapper(characters!!), dtoToCharacterCacheEntityMapper(characters.results))
     }
 
 

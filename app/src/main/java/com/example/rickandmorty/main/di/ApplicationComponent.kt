@@ -13,6 +13,7 @@ import retrofit2.Retrofit
 interface ApplicationComponent : CharactersDep, LocationDep, EpisodeDep {
 
     override val context: Context
+
     override val retrofit: Retrofit
 
     @Component.Factory

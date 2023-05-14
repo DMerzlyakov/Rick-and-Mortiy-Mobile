@@ -1,7 +1,6 @@
 package com.example.rickandmorty.episode.presentation.detail
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,10 +17,13 @@ class EpisodeDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _episodeLiveData = MutableLiveData<EpisodeDetailUi>()
-    private val errorLiveData = MutableLiveData<String>()
+    private val _errorLiveData = MutableLiveData<String>()
 
     val episodeLiveData: LiveData<EpisodeDetailUi>
         get() = _episodeLiveData
+
+    val errorLiveData: LiveData<String>
+        get() = _errorLiveData
 
     @SuppressLint("CheckResult")
     fun getEpisode(episodeId: Int) {
@@ -37,8 +39,7 @@ class EpisodeDetailViewModel @Inject constructor(
     }
 
     private fun handleError(t: Throwable) {
-        errorLiveData.postValue(t.toString())
-        Log.e("DATA", t.toString())
+        _errorLiveData.postValue(t.localizedMessage)
     }
 
 }

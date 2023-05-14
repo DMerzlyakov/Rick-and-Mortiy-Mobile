@@ -5,6 +5,8 @@ import androidx.room.Room
 import com.example.rickandmorty.location.data.list.LocationsListRepositoryImpl
 import com.example.rickandmorty.location.data.list.local.LocationDao
 import com.example.rickandmorty.location.data.list.local.LocationDatabase
+import com.example.rickandmorty.location.data.list.mapper.LocationDtoToLocationEntityMapper
+import com.example.rickandmorty.location.data.list.mapper.LocationEntityToLocationDomainMapper
 import com.example.rickandmorty.location.data.list.remote.LocationListApi
 import com.example.rickandmorty.location.domain.list.LocationsListRepository
 import dagger.Module
@@ -14,7 +16,6 @@ import javax.inject.Singleton
 
 @Module
 class LocationListRepositoryModule {
-
 
     @Singleton
     @Provides
@@ -45,17 +46,17 @@ class LocationListRepositoryModule {
         return database.locationDao()
     }
 
-
     @Singleton
     @Provides
     fun provideCharacterListRepositoryImpl(
         locationListApi: LocationListApi,
-        locationDao: LocationDao
+        locationDao: LocationDao,
+        mapperToEntity: LocationDtoToLocationEntityMapper,
+        mapperToDomain: LocationEntityToLocationDomainMapper
     ): LocationsListRepositoryImpl {
         return LocationsListRepositoryImpl(
-            locationListApi,
-            locationDao
+            locationListApi, locationDao,
+            mapperToEntity, mapperToDomain
         )
     }
-
 }

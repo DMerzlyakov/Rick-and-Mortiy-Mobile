@@ -6,13 +6,14 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.example.rickandmorty.location.data.list.local.LocationDao
 import com.example.rickandmorty.location.data.list.local.model.LocationEntity
-import com.example.rickandmorty.location.data.list.mapper.toLocationEntity
+import com.example.rickandmorty.location.data.list.mapper.LocationDtoToLocationEntityMapper
 import com.example.rickandmorty.location.data.list.remote.LocationListApi
 
 @OptIn(ExperimentalPagingApi::class)
 class LocationRemoteMediator(
     private val locationApi: LocationListApi,
     private val locationDao: LocationDao,
+    private val mapperToEntity: LocationDtoToLocationEntityMapper,
     private val name: String,
     private val type: String,
     private val dimension: String
@@ -30,14 +31,9 @@ class LocationRemoteMediator(
         val limit = state.config.pageSize
 
         return try {
-
             val locations = getLocationsByRemote(name, type, dimension)
-
             locationDao.save(locations)
-
-            MediatorResult.Success(
-                endOfPaginationReached = locations.size < limit
-            )
+            MediatorResult.Success(endOfPaginationReached = locations.size < limit)
         } catch (e: Exception) {
             MediatorResult.Error(e)
         }
@@ -48,8 +44,8 @@ class LocationRemoteMediator(
         type: String,
         dimension: String
     ): List<LocationEntity> {
-        return locationApi.getAllLocation(pageIndex, name, type, dimension).body()!!
-            .toLocationEntity()
+        val body = locationApi.getAllLocation(pageIndex, name, type, dimension).body()
+        return mapperToEntity(body!!)
     }
 
     private fun getPagedIndex(loadType: LoadType): Int? {
@@ -59,6 +55,5 @@ class LocationRemoteMediator(
             LoadType.APPEND -> ++pageIndex
         }
         return pageIndex
-
     }
 }

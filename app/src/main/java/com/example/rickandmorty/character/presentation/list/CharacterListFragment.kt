@@ -15,7 +15,6 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.rickandmorty.character.di.DaggerCharacterComponent
 import com.example.rickandmorty.character.domain.list.model.CharacterFilter
-import com.example.rickandmorty.character.presentation.detail.CharacterDetailsFragment
 import com.example.rickandmorty.character.presentation.list.model.CharacterUi
 import com.example.rickandmorty.character.presentation.list.recycler_view.CharactersRecyclerViewAdapter
 import com.example.rickandmorty.databinding.FragmentCharacterListBinding
@@ -24,6 +23,7 @@ import com.example.rickandmorty.main.presentation.RickAndMortyApp
 import com.example.rickandmorty.universal_filter.FilterFragment
 import com.example.rickandmorty.universal_filter.OnFilterResultListenerCharacter
 import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -44,16 +44,13 @@ class CharacterListFragment : Fragment() {
             .create((requireActivity().application as RickAndMortyApp).component)
     }
 
-
     @Inject
     lateinit var viewModelFactory: CharacterListViewModelFactory
 
     private val onClickRecyclerViewInterface = object :
         OnClickRecyclerViewInterface<CharacterUi> {
         override fun onItemClick(item: CharacterUi, position: Int) {
-            val fragment = CharacterDetailsFragment.newInstance(item.id)
-            onNavigationListener.navigateToFragment(fragment)
-            onNavigationListener.updateBottomNavigationVisibility(View.GONE)
+            onNavigationListener.navigateToCharacterDetailFragment(item.id)
         }
     }
 
@@ -62,8 +59,8 @@ class CharacterListFragment : Fragment() {
     }
 
     private val adapter = CharactersRecyclerViewAdapter(onClickRecyclerViewInterface)
-
     private var fragmentType = TYPE.TYPE_FULL_SCREEN
+    private var snackBarVisible = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -79,7 +76,6 @@ class CharacterListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         if (arguments != null) {
             fragmentType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 requireArguments().getSerializable(KEY_TYPE, TYPE::class.java) as TYPE
@@ -95,36 +91,27 @@ class CharacterListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCharacterListBinding.inflate(inflater, container, false)
-
         setupFragmentType()
-
-
         return binding.root
     }
 
     private fun setupFragmentType() {
         when (fragmentType) {
-
             TYPE.TYPE_FULL_SCREEN -> {
-                onNavigationListener.updateBottomNavigationVisibility(View.VISIBLE)
+                onNavigationListener.setupBottomNavigationVisible()
                 binding.constraintLayout.visibility = View.VISIBLE
-
                 observeFullCharacterList()
             }
             TYPE.TYPE_ONLY_LIST_BY_ID -> {
                 binding.refreshLayout.isEnabled = false
                 binding.constraintLayout.visibility = View.GONE
-
-
                 val characterIdList = requireArguments().getIntegerArrayList(KEY_ID_LIST)
-
                 if (characterIdList.isNullOrEmpty()) {
                     binding.circularProgressBar.isVisible = false
                     binding.listEmptyText.visibility = View.VISIBLE
                 } else {
                     observeCharacterListById(characterIdList.toList())
                 }
-
             }
         }
     }
@@ -140,12 +127,10 @@ class CharacterListFragment : Fragment() {
             searchView.editText?.addTextChangedListener {
                 viewModel.setSearchByFilter(CharacterFilter(it.toString()))
             }
-
             filterBtn.setOnClickListener {
                 val dialog = FilterFragment.newInstance(
                     FilterFragment.Companion.TYPE.FROM_CHARACTER_LIST
                 )
-
                 dialog.setOnFilterResultListenerCharacter(object : OnFilterResultListenerCharacter {
                     override fun confirmFilter(item: CharacterFilter?) {
                         item?.let {
@@ -157,12 +142,10 @@ class CharacterListFragment : Fragment() {
                 })
                 dialog.show(childFragmentManager, "Filter")
             }
-
             refreshLayout.setOnRefreshListener {
                 binding.circularProgressBar.visibility = View.INVISIBLE
                 adapter.refresh()
             }
-
         }
     }
 
@@ -183,6 +166,7 @@ class CharacterListFragment : Fragment() {
                     else -> return@addLoadStateListener
                 }
             }
+
             with(binding) {
                 if (circularProgressBar.isVisible) {
                     circularProgressBar.isVisible = loadState.refresh is LoadState.Loading
@@ -195,7 +179,22 @@ class CharacterListFragment : Fragment() {
     }
 
     private fun makeToast(message: String) {
-        Snackbar.make(binding.refreshLayout, message, Snackbar.LENGTH_SHORT).show()
+        if (!snackBarVisible) {
+            snackBarVisible = true
+            Snackbar
+                .make(binding.root, message, Snackbar.LENGTH_SHORT)
+                .setAnchorView(binding.forToast)
+                .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                        if (event == DISMISS_EVENT_TIMEOUT) {
+                            snackBarVisible = false
+                        }
+                        super.onDismissed(transientBottomBar, event)
+                    }
+                }
+                )
+                .show()
+        }
     }
 
     private fun observeFullCharacterList() {
@@ -217,7 +216,7 @@ class CharacterListFragment : Fragment() {
     companion object {
         @JvmStatic
         fun newInstance(
-            TYPE_PARAM: TYPE,
+            TYPE_PARAM: TYPE = TYPE.TYPE_FULL_SCREEN,
             CHARACTER_LIST: List<Int> = emptyList()
         ): CharacterListFragment {
             val fragment = CharacterListFragment()

@@ -1,7 +1,5 @@
 package com.example.rickandmorty.character.presentation.detail;
 
-import android.annotation.SuppressLint;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -20,11 +18,12 @@ public class CharacterDetailViewModel extends ViewModel {
 
 
     private final GetCharacterDetailUseCase getCharacterDetailUseCase;
-    private final CharacterDetailDomainToCharacterDetailUiMapper mapper = new CharacterDetailDomainToCharacterDetailUiMapper();
+    private final CharacterDetailDomainToCharacterDetailUiMapper mapper;
 
     @Inject
-    public CharacterDetailViewModel(GetCharacterDetailUseCase getCharacterDetailUseCase) {
+    public CharacterDetailViewModel(GetCharacterDetailUseCase getCharacterDetailUseCase, CharacterDetailDomainToCharacterDetailUiMapper mapper) {
         this.getCharacterDetailUseCase = getCharacterDetailUseCase;
+        this.mapper = mapper;
     }
 
     private final MutableLiveData<CharacterDetailUi> characterLiveData = new MutableLiveData<>();
@@ -34,13 +33,15 @@ public class CharacterDetailViewModel extends ViewModel {
         return characterLiveData;
     }
 
+    public LiveData<String> getErrorLiveData() {
+        return errorLiveData;
+    }
 
-    @SuppressLint("CheckResult")
+
     public void getCharacter(int CharacterId) {
         getCharacterDetailUseCase.invoke(CharacterId)
                 .subscribeOn(Schedulers.io())
-                .subscribeWith(new DisposableSingleObserver<CharacterDetailDomain>() {
-
+                .subscribe(new DisposableSingleObserver<CharacterDetailDomain>() {
                     @Override
                     public void onSuccess(CharacterDetailDomain characterDetailDomain) {
                         handleResults(characterDetailDomain);
@@ -50,7 +51,6 @@ public class CharacterDetailViewModel extends ViewModel {
                     public void onError(Throwable e) {
                         handleError(e);
                     }
-
                 });
     }
 
@@ -63,7 +63,7 @@ public class CharacterDetailViewModel extends ViewModel {
     }
 
     private void handleError(Throwable t) {
-        errorLiveData.postValue(t.toString());
+        errorLiveData.postValue(t.getLocalizedMessage());
     }
 
 

@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.rickandmorty.databinding.FragmentLocationListBinding
 import com.example.rickandmorty.location.di.DaggerLocationComponent
 import com.example.rickandmorty.location.domain.list.model.LocationFilter
-import com.example.rickandmorty.location.presentation.detail.LocationDetailFragment
 import com.example.rickandmorty.location.presentation.list.model.LocationUi
 import com.example.rickandmorty.location.presentation.list.recycler_view.LocationsRecyclerViewAdapter
 import com.example.rickandmorty.main.presentation.OnNavigationListener
@@ -24,6 +23,7 @@ import com.example.rickandmorty.universal_filter.FilterFragment
 import com.example.rickandmorty.universal_filter.FilterFragment.Companion.TYPE.FROM_LOCATION_LIST
 import com.example.rickandmorty.universal_filter.OnFilterResultListenerLocation
 import com.example.rickandmorty.utils.OnClickRecyclerViewInterface
+import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -50,27 +50,20 @@ class LocationListFragment : Fragment() {
         ViewModelProvider(this, viewModelFactory)[LocationListViewModel::class.java]
     }
 
-
     private val onClickRecyclerViewInterface = object : OnClickRecyclerViewInterface<LocationUi> {
         override fun onItemClick(item: LocationUi, position: Int) {
-            val fragment = LocationDetailFragment.newInstance(item.id)
-            onNavigationListener.navigateToFragment(fragment)
-            onNavigationListener.updateBottomNavigationVisibility(View.GONE)
+            onNavigationListener.navigateToLocationDetailFragment(item.id)
         }
     }
 
     private val adapter = LocationsRecyclerViewAdapter(onClickRecyclerViewInterface)
+    private var snackBarVisible = false
 
     override fun onAttach(context: Context) {
-
-        if (context is OnNavigationListener) {
-            onNavigationListener = context
-        } else {
-            throw RuntimeException("Activity must be implements OnNavigationListener")
-        }
+        if (context is OnNavigationListener) onNavigationListener = context
+        else throw RuntimeException("Activity must be implements OnNavigationListener")
 
         component.inject(this)
-
         super.onAttach(context)
     }
 
@@ -78,18 +71,14 @@ class LocationListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentLocationListBinding.inflate(inflater, container, false)
-        onNavigationListener.updateBottomNavigationVisibility(View.VISIBLE)
-
+        onNavigationListener.setupBottomNavigationVisible()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         initialRecycleView()
         initListeners()
-
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -98,9 +87,7 @@ class LocationListFragment : Fragment() {
             searchView.editText?.addTextChangedListener {
                 viewModel.setSearchByFilter(LocationFilter(it.toString()))
             }
-
             filterBtn.setOnClickListener(this@LocationListFragment::startFilterFragment)
-
             refreshLayout.setOnRefreshListener {
                 binding.circularProgressBar.visibility = View.INVISIBLE
                 adapter.refresh()
@@ -110,9 +97,7 @@ class LocationListFragment : Fragment() {
     }
 
     private fun startFilterFragment(view: View) {
-
         val dialog = FilterFragment.newInstance(FROM_LOCATION_LIST)
-
         dialog.setOnFilterResultListenerLocation(object : OnFilterResultListenerLocation {
             override fun confirmFilter(item: LocationFilter?) {
                 item?.let {
@@ -123,13 +108,11 @@ class LocationListFragment : Fragment() {
                 }
             }
         })
-
         dialog.show(childFragmentManager, "Filter")
 
     }
 
     private fun initialStateListener() {
-
         adapter.addLoadStateListener { loadState ->
             if (loadState.refresh is LoadState.Error) {
                 val error = loadState.refresh as LoadState.Error
@@ -139,7 +122,6 @@ class LocationListFragment : Fragment() {
                     else -> return@addLoadStateListener
                 }
             }
-
             with(binding) {
                 if (circularProgressBar.isVisible) {
                     circularProgressBar.isVisible = loadState.refresh is LoadState.Loading
@@ -148,19 +130,32 @@ class LocationListFragment : Fragment() {
                     refreshLayout.isRefreshing = loadState.refresh is LoadState.Loading
                 }
             }
-
         }
     }
 
-    private fun makeToast(message: String) =
-        Snackbar.make(binding.constraintLayout, message, Snackbar.LENGTH_SHORT).show()
+    private fun makeToast(message: String) {
+        if (!snackBarVisible) {
+            snackBarVisible = true
+            Snackbar
+                .make(binding.root, message, Snackbar.LENGTH_SHORT)
+                .setAnchorView(binding.forToast)
+                .addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar>() {
+                    override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
+                        if (event == DISMISS_EVENT_TIMEOUT) {
+                            snackBarVisible = false
+                        }
+                        super.onDismissed(transientBottomBar, event)
+                    }
+                })
+                .show()
+        }
+    }
 
 
     /** Установка адаптера для RecyclerView*/
     private fun initialRecycleView() = with(binding) {
         locationList.layoutManager = GridLayoutManager(requireContext(), 2)
         locationList.adapter = adapter
-
         observeLocations()
         initialStateListener()
     }

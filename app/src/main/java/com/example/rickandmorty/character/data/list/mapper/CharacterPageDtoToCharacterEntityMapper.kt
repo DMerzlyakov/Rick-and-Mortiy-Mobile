@@ -1,13 +1,13 @@
 package com.example.rickandmorty.character.data.list.mapper
 
 import com.example.rickandmorty.character.data.list.local.model.CharacterEntity
-import com.example.rickandmorty.character.data.list.remote.model.CharacterPagedDTO
+import com.example.rickandmorty.character.data.list.remote.model.CharacterPageDTO
 import javax.inject.Inject
 
 
 class CharacterPageDtoToCharacterEntityMapper @Inject constructor() {
 
-    operator fun invoke(item: CharacterPagedDTO): List<CharacterEntity> {
+    operator fun invoke(item: CharacterPageDTO): List<CharacterEntity> {
 
         return item.results.map {
 

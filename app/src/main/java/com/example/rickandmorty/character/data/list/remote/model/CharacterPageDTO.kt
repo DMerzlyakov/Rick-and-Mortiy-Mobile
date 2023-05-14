@@ -2,7 +2,7 @@ package com.example.rickandmorty.character.data.list.remote.model
 
 import com.google.gson.annotations.SerializedName
 
-data class CharacterPagedDTO(
+data class CharacterPageDTO(
     @SerializedName("info")
     var info: Info,
     @SerializedName("results")

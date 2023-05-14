@@ -7,7 +7,8 @@ import kotlinx.coroutines.flow.Flow
 interface GetLocationListUseCase {
 
     suspend operator fun invoke(
-        name: String, type: String,
+        name: String,
+        type: String,
         dimension: String
     ): Flow<PagingData<LocationDomain>>
 

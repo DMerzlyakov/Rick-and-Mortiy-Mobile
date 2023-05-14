@@ -17,13 +17,14 @@ class LocationDetailRepositoryImpl @Inject constructor(
 ) : LocationDetailRepository {
     override fun getLocationDetail(mId: Int): Single<LocationDetailDomain> {
 
-        return getLocationDetailByRemote(mId).flatMap {
-            locationDetailDao.saveLocation(it).andThen(Single.just(entityToDomainMapper(it)))
-        }.onErrorResumeNext { _: Throwable ->
-            locationDetailDao.getLocationById(mId).map {
-                entityToDomainMapper(it)
+        return getLocationDetailByRemote(mId)
+            .flatMap {
+                locationDetailDao.saveLocation(it).andThen(Single.just(entityToDomainMapper(it)))
+            }.onErrorResumeNext { _: Throwable ->
+                locationDetailDao.getLocationById(mId).map {
+                    entityToDomainMapper(it)
+                }
             }
-        }
     }
 
     private fun getLocationDetailByRemote(mId: Int) =

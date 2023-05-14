@@ -1,12 +1,13 @@
 package com.example.rickandmorty.main.presentation
 
-import androidx.fragment.app.Fragment
 
 interface OnNavigationListener {
 
-    fun updateBottomNavigationVisibility(visibility: Int)
+    fun setupBottomNavigationVisible()
 
-    fun navigateToFragment(fragment: Fragment)
+    fun navigateToCharacterDetailFragment(id:Int)
+    fun navigateToEpisodeDetailFragment(id: Int)
+    fun navigateToLocationDetailFragment(id: Int)
 
     fun toBackStack()
 }
