@@ -19,8 +19,7 @@
 
 В приложении одна основная activity выступает контейнером для fragment-ов. При запуске приложения отображается splash screen на несколько секунд.
 
-![Splash Screen](images/splashScreen.png)
-
+<img src="images/splashScreen.png" width="100" height="500">
 
 Далее открывается основной экран приложения (MainActivity) со страницей списка всех персонажей в сериале.
 IMG
