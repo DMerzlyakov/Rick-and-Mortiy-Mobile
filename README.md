@@ -41,7 +41,7 @@
 
 <a name="characterDetail"><h3>Фрагмент детальной информации о персонаже</h3></a>
 
-
+<img src="images/characterDetail.png" width="300" height="650"> 
 <a name="characterList"><h3>Фрагмент списка эпизодов </h3></a>
 
 <a name="characterList"><h3>Фрагмент списка локаций </h3></a>
