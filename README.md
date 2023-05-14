@@ -1,6 +1,7 @@
 # Rick And Morty - Android
 
 Мобильное приложение под Android. Привязанно к api: https://rickandmortyapi.com/. Отображает информацию о персонажах, локациях и эпизодов популярного мультсериала "Rick and Morty".
+Перенаправление к [APK](app/release/)
 
 
 ## Стек технологий
