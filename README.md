@@ -75,6 +75,6 @@
 Реализованы unit-тесты для всех маперов и view model в проекте. 
 
 ## Демонстрация
-[![Watch the video](https://trashbox.ru/ifiles/1718343_c01335_youtube17years.png-orig/2022-10-25-redizajn-vpervye-za-dolgie-gody-3.jpg)](https://www.youtube.com/watch?v=U9sytbhoMbk)
+[Youtube Link - Rick And Morty - Android App](https://www.youtube.com/watch?v=U9sytbhoMbk)
 
 
